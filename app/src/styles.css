@@ -1,0 +1,17 @@
+/* * Este arquivo é onde você deve importar os estilos base do Tailwind 
+ * e adicionar qualquer estilo global que não seja específico de um componente.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* * Estilos globais personalizados, se houver.
+ * Exemplo: Definir a fonte padrão para todo o corpo.
+ */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}

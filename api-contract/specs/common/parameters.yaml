@@ -1,0 +1,19 @@
+# Definições de Parâmetros Reutilizáveis
+PaginationLimit:
+  name: limit
+  in: query
+  description: "Número máximo de itens a retornar por página."
+  required: false
+  schema:
+    type: integer
+    format: int32
+    default: 50
+
+CommonId:
+  name: id
+  in: query
+  description: "Identificador para indexar."
+  required: true
+  schema:
+    type: integer
+    format: int32

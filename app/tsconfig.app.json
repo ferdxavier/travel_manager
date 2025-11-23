@@ -1,0 +1,21 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": [
+      "node"
+    ],
+    "skipLibCheck": true,
+    // Adicionamos esta linha para desativar a regra estrita de 'override' no código da aplicação, 
+    // resolvendo o erro TS4115 no ficheiro gerado 'runtime.ts'.
+    "noImplicitOverride": false 
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ]
+}

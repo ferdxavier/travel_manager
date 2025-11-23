@@ -1,0 +1,120 @@
+# Parâmetros de Path (ID)
+parameters:
+  # Referência ao parâmetro ID que sugerimos modularizar (melhor prática)
+  - $ref: "../../common/parameters.yaml#/CommonId" 
+
+get:
+  summary: "Recupera os detalhes de um veículo específico."
+  description: "Retorna a representação completa de um veículo pelo seu ID único."
+  operationId: getVehicleById
+  tags:
+    - Vehicles
+
+  responses:
+    "200":
+      description: "Detalhes do veículo recuperado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/vehicle.yaml#/Vehicle" 
+
+    "404":
+      description: "Veículo não encontrado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/Error"
+
+    default:
+      description: "Erro inesperado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/Error"
+
+put:
+  summary: "Substitui completamente um registo de veículo."
+  description: "Substitui o registo completo do veículo pelo ID. Requer todos os campos obrigatórios."
+  operationId: replaceVehicle
+  tags:
+    - Vehicles
+
+  requestBody:
+    description: "O objeto VehicleRequest completo para substituir o recurso."
+    required: true
+    content:
+      application/json:
+        schema:
+          # PUT usa o DTO de Criação para forçar todos os campos
+          $ref: "../../schemas/vehicle.yaml#/CreateVehicleRequest" 
+
+  responses:
+    "200":
+      description: "Veículo substituído com sucesso."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/vehicle.yaml#/Vehicle"
+
+    default:
+      description: "Erro ao substituir o veículo."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/Error"
+
+patch:
+  summary: "Atualiza parcialmente os detalhes de um veículo."
+  description: "Permite atualizar um ou mais campos do veículo sem enviar o objeto completo (Partial Update)."
+  operationId: updateVehicle
+  tags:
+    - Vehicles
+
+  requestBody:
+    description: "O objeto UpdateVehicleRequest com os campos a serem modificados."
+    required: true
+    content:
+      application/json:
+        schema:
+          # PATCH usa o DTO de Atualização Parcial
+          $ref: "../../schemas/vehicle.yaml#/UpdateVehicleRequest" 
+
+  responses:
+    "200":
+      description: "Veículo atualizado com sucesso. Retorna o objeto atualizado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/vehicle.yaml#/Vehicle"
+
+    default:
+      description: "Erro ao atualizar o veículo."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/Error"
+
+delete:
+  summary: "Remove um veículo da frota."
+  description: "Remove permanentemente (ou logicamente desativa) um veículo pelo seu ID."
+  operationId: deleteVehicle
+  tags:
+    - Vehicles
+
+  responses:
+    "204":
+      description: "Veículo removido com sucesso (Sem conteúdo)."
+    
+    "404":
+      description: "Veículo não encontrado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/Error"
+
+    default:
+      description: "Erro ao remover o veículo."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/Error"

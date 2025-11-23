@@ -1,0 +1,17 @@
+# Esquema de Erro
+Error:
+  type: object
+  description: "Modelo de resposta para erros."
+  properties:
+    code:
+      type: integer
+      format: int32
+      description: "Código de status HTTP ou código de erro interno."
+      example: 400
+    message:
+      type: string
+      description: "Mensagem de erro detalhada."
+      example: "Dados inválidos: A placa 'ABC1F34' já está em uso."
+  required:
+    - code
+    - message

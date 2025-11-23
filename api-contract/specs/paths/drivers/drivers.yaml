@@ -1,0 +1,27 @@
+# Conteúdo do path /drivers (incluído no openapi.yaml principal)
+get:
+  summary: "Lista todos os motorista do empresa."
+  description: "Recupera uma lista paginada de todos os motoristas registados na empresa."
+  operationId: listDrivers
+  tags:
+    - Drivers
+
+  parameters:
+    - $ref: "../../common/parameters.yaml#/PaginationLimit" # Referência local
+
+  responses:
+    "200":
+      description: "Uma lista paginada de motorista."
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "../../schemas/driver.yaml#/Driver" # Referência local
+
+    default:
+      description: "Erro inesperado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/Error" # Referência local

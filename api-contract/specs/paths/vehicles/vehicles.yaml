@@ -1,0 +1,69 @@
+get:
+  summary: "Lista todos os veículos disponíveis na frota."
+  description: "Recupera uma lista paginada de todos os veículos registados na frota, com opções de filtragem por status operacional."
+  operationId: listVehicles
+  tags:
+    - Vehicles
+
+  parameters:
+    - name: status
+      in: query
+      description: "Filtra por status do veículo (ex: 'available', 'maintenance')."
+      required: false
+      schema:
+        type: string
+        enum:
+          - available
+          - maintenance
+          - retired
+    # Referência ao parâmetro de paginação definido em outro lugar
+    - $ref: "../../common/parameters.yaml#/PaginationLimit" 
+
+  responses:
+    "200":
+      description: "Uma lista paginada de veículos."
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              # Referência ao Schema Vehicle (caminho relativo ao arquivo de paths)
+              $ref: "../../schemas/vehicle.yaml#/Vehicle" 
+
+    default:
+      description: "Erro inesperado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/Error" 
+
+post:
+  summary: "Cria um novo registo de veículo na frota."
+  description: "Adiciona um novo veículo à frota, validando que a placa de matrícula é única."
+  operationId: createVehicle
+  tags:
+    - Vehicles
+
+  requestBody:
+    description: "O objeto CreateVehicleRequest necessário para criar um novo veículo."
+    required: true
+    content:
+      application/json:
+        schema:
+          # Referência ao DTO de Criação
+          $ref: "../../schemas/vehicle.yaml#/CreateVehicleRequest" 
+
+  responses:
+    "201":
+      description: "Veículo criado com sucesso. Retorna o objeto Vehicle completo."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/vehicle.yaml#/Vehicle" 
+
+    default:
+      description: "Erro ao criar o veículo."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/Error" 

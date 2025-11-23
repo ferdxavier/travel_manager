@@ -1,0 +1,71 @@
+openapi: 3.0.3
+
+info:
+  title: "Travel Manager - API de Gestão de recursos de transporte rodoviário"
+  description: "Especificação modular da API de back-end. Todos os schemas e paths estão em ficheiros separados (specs/). Use um agregador OpenAPI (como o ReDoc ou Swagger UI) para visualizar a documentação completa."
+  version: 1.0.0
+  contact:
+    name: "Fernando"
+    email: "ferdxavier@gmail.com"
+
+servers:
+  - url: "http://localhost:8080/api"
+
+tags:
+  - name: Vehicles
+    description: "Operações de gestão da frota de veículos."
+  - name: Drivers
+    description: "Manutenção de motoristas"
+
+# ----------------------------------------------------------------------
+# 1. PATHS (Endpoints) - Referências aos ficheiros de paths
+# ----------------------------------------------------------------------
+paths:
+  /vehicles:
+    $ref: "./specs/paths/vehicles/vehicles.yaml"
+  /vehicles/{id}:
+    $ref: "./specs/paths/vehicles/vehicles_by_id.yaml"
+  /drivers:
+    $ref: "./specs/paths/drivers/drivers.yaml"
+
+# ----------------------------------------------------------------------
+# 2. COMPONENTS (Estruturas de Dados e Elementos Reutilizáveis)
+# ----------------------------------------------------------------------
+components:
+  schemas:
+    # ----------------------------------------------------------------------
+    # Vehicles
+    # ----------------------------------------------------------------------
+    Vehicle:
+      $ref: "./specs/schemas/vehicle.yaml#/Vehicle"
+    CreateVehicleRequest:
+      $ref: "./specs/schemas/vehicle.yaml#/CreateVehicleRequest"
+    UpdateVehicleRequest:
+      $ref: "./specs/schemas/vehicle.yaml#/UpdateVehicleRequest"
+    # ----------------------------------------------------------------------
+    # Drives
+    # ----------------------------------------------------------------------
+    Driver:
+      $ref: "./specs/schemas/driver.yaml#/Driver"
+    CreateDriverRequest:
+      $ref: "./specs/schemas/driver.yaml#/CreateDriverRequest"
+    # ----------------------------------------------------------------------
+    # Commons
+    # ----------------------------------------------------------------------
+    Error:
+      $ref: "./specs/schemas/common_error.yaml#/Error"
+      
+  parameters:
+    PaginationLimit:
+      $ref: "./specs/common/parameters.yaml#/PaginationLimit"
+    CommonId:
+      $ref: "./specs/common/parameters.yaml#/CommonId"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: ['kjshdfahskfhakjsdfhkjasdhfkadsh']
