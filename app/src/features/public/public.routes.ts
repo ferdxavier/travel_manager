@@ -15,6 +15,10 @@ export const PUBLIC_ROUTES: Routes = [
     path: 'login',
     component: LoginComponent
   },
+  {
+    path: 'report-reason',
+      loadChildren: () => import('./report-reason/report-reason.routes').then((m) => m.REPORT_REASON_ROUTES),
+  },
 
   // Outras rotas públicas (e.g., 'about', 'contact', 'register')
 ];

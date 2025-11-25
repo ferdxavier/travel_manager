@@ -10,7 +10,6 @@ import { CreateVehicleRequest, CreateVehicleRequestStatusEnum, VEHICLE_SCHEMA_DE
       <div class="mx-auto bg-white shadow-xl p-4 md:p-10">
         <header class="mb-8 border-b pb-4 flex items-center justify-between">
           <h1 class="text-3xl font-extrabold text-indigo-700 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bus-front-icon lucide-bus-front"><path d="M4 6 2 7"/><path d="M10 6h4"/><path d="m22 7-2-1"/><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M8 15h.01"/><path d="M16 15h.01"/><path d="M6 19v2"/><path d="M18 21v-2"/></svg>
             Cadastro de Novo Veículo
           </h1>
           <button (click)="goToVehiclesList()" class="text-sm text-gray-500 hover:text-indigo-600 transition duration-150 flex items-center">
@@ -768,14 +767,14 @@ import { CreateVehicleRequest, CreateVehicleRequestStatusEnum, VEHICLE_SCHEMA_DE
             <button 
               type="button" 
               (click)="goToVehiclesList()" 
-              class="btn-secondary"
+              class="btn-cancel"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
               Cancelar
             </button>
             <button 
               type="submit" 
-              class="btn-primary"
+              class="btn-confirm"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8h-6v8"/><path d="M7 11h4V7H7z"/></svg>
               Salvar Veículo
@@ -809,12 +808,6 @@ import { CreateVehicleRequest, CreateVehicleRequestStatusEnum, VEHICLE_SCHEMA_DE
 
     .form-checkbox {
       @apply h-5 w-5 text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500;
-    }
-    .btn-primary {
-      @apply inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150;
-    }
-    .btn-secondary {
-      @apply inline-flex items-center px-4 py-2 border border-gray-300 text-base font-medium rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150;
     }
     .uppercase {
       text-transform: uppercase;

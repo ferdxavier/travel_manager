@@ -13,9 +13,13 @@ servers:
 
 tags:
   - name: Vehicles
-    description: "Operações de gestão da frota de veículos."
+    description: "Manutenção de frota de veículos."
   - name: Drivers
     description: "Manutenção de motoristas"
+  - name: ServiceOrders
+    description: "Manutenção de ordens de serviços para veículos"
+  - name: ReportReason
+    description: "Manutenção de relatos referente a um veículo"
 
 # ----------------------------------------------------------------------
 # 1. PATHS (Endpoints) - Referências aos ficheiros de paths
@@ -27,6 +31,10 @@ paths:
     $ref: "./specs/paths/vehicles/vehicles_by_id.yaml"
   /drivers:
     $ref: "./specs/paths/drivers/drivers.yaml"
+  /serviceOrders:
+    $ref: "./specs/paths/serviceOrders/serviceOrders.yaml"
+  /reportReason:
+    $ref: "./specs/paths/reportReason/reportReason.yaml"
 
 # ----------------------------------------------------------------------
 # 2. COMPONENTS (Estruturas de Dados e Elementos Reutilizáveis)
@@ -49,6 +57,24 @@ components:
       $ref: "./specs/schemas/driver.yaml#/Driver"
     CreateDriverRequest:
       $ref: "./specs/schemas/driver.yaml#/CreateDriverRequest"
+    # ----------------------------------------------------------------------
+    # Service Orders
+    # ----------------------------------------------------------------------
+    ServiceOrders:
+      $ref: "./specs/schemas/serviceorders.yaml#/ServiceOrders"
+    CreateServiceOrdersRequest:
+      $ref: "./specs/schemas/serviceorders.yaml#/CreateServiceOrdersRequest"
+        # ----------------------------------------------------------------------
+    # Service Orders
+    # ----------------------------------------------------------------------
+    PassengerReportReason:
+      $ref: "./specs/schemas/reportReason.yaml#/PassengerReportReason"
+    DriverReportReason:
+      $ref: "./specs/schemas/reportReason.yaml#/DriverReportReason"
+    CreatePassengerReportRequest:
+      $ref: "./specs/schemas/reportReason.yaml#/CreatePassengerReportRequest"
+    CreateDriverReportRequest:
+      $ref: "./specs/schemas/reportReason.yaml#/CreateDriverReportRequest"
     # ----------------------------------------------------------------------
     # Commons
     # ----------------------------------------------------------------------

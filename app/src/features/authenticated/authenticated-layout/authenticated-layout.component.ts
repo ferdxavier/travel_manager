@@ -161,9 +161,8 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
             </span>
           </a>
 
-          <!-- Link: Minhas Viagens 
           <a
-            [routerLink]="['/app/trips']"
+            [routerLink]="['/app/drivers']"
             routerLinkActive="bg-primary-700 font-semibold"
             class="flex items-center p-3 rounded-lg hover:bg-primary-700 transition duration-150"
             [ngClass]="{
@@ -174,17 +173,22 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 flex-shrink-0"
-              fill="none"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
+              fill="none"
               stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-life-buoy-icon lucide-life-buoy"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
+              <circle cx="12" cy="12" r="10" />
+              <path d="m4.93 4.93 4.24 4.24" />
+              <path d="m14.83 9.17 4.24-4.24" />
+              <path d="m14.83 14.83 4.24 4.24" />
+              <path d="m9.17 14.83-4.24 4.24" />
+              <circle cx="12" cy="12" r="4" />
             </svg>
             <span
               class="whitespace-nowrap transition-all duration-300"
@@ -193,11 +197,9 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
                 'w-auto opacity-100 ml-3': !isSidebarCollapsed
               }"
             >
-              Minhas Viagens
+              Motoristas
             </span>
           </a>
-          -->
-
         </div>
         <!-- Fim dos Links de Navegação (Scrollable Area) -->
 

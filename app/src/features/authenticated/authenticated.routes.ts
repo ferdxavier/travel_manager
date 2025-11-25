@@ -27,7 +27,14 @@ export const AUTHENTICATED_ROUTES: Routes = [
         path: 'vehicles',
         loadChildren: () => import('./vehicles/vehicles.routes').then((m) => m.VEHICLE_ROUTES),
       },
-
+      {
+        path: 'drivers',
+        loadChildren: () => import('./drivers/drivers.routes').then((m) => m.DRIVER_ROUTES),
+      },
+      {
+        path: 'service-orders',
+        loadChildren: () => import('./service-orders/service-orders.routes').then((m) => m.SERVICE_ORDERS_ROUTES),
+      },
       // Rota padrão (default): /app
       // Redireciona para o dashboard, que será carregado DENTRO do Layout.
       {

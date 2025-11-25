@@ -60,6 +60,7 @@ CreateDriverRequest:
       example: "Fernando Castro de Abreu"
       minLength: 3
       maxLength: 60
+      x-ui-label: "Nome Completo" 
     cpf:
       type: string
       description: "Número do CPF (apenas 11 dígitos)."
@@ -67,33 +68,39 @@ CreateDriverRequest:
       minLength: 11
       maxLength: 11
       pattern: "^[0-9]{11}$"
+      x-ui-label: "CPF"
     rg:
       type: string
       description: "Número do RG ou Carteira de Identidade."
       example: "13569569" # Removendo a formatação (pontos/traços) para simplificar a validação.
       minLength: 3
       maxLength: 15
+      x-ui-label: "RG"
     dateBirth:
       type: string
       format: date # Alterado para 'date'
       description: "Data de Nascimento (YYYY-MM-DD). Requer validação de idade (+18) no código da API."
       example: "1985-06-15"
+      x-ui-label: "Data de Nascimento"
     cnhNumber:
       type: string
       description: "Número da Carteira Nacional de Habilitação (CNH)."
       example: "2536565936616546"
       maxLength: 15
       pattern: "^[0-9]{8,15}$"
+      x-ui-label: "Número da CNH"
     validityCnh:
       type: string
       format: date # Alterado para 'date'
       description: "Data de validade da CNH. Requer validação para ser no futuro no código da API."
       example: "2027-10-25"
+      x-ui-label: "Validade da CNH"
     validityToxicological:
       type: string
       format: date # Alterado para 'date'
       description: "Data de validade do exame toxicológico. Requer validação para ser no futuro no código da API."
       example: "2024-03-01"
+      x-ui-label: "Validade do Exame Toxicológico"
   required:
     - name
     - cpf
