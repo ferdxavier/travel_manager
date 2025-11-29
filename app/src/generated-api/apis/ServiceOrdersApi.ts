@@ -16,26 +16,34 @@
 import * as runtime from '../runtime';
 import type {
   CreateServiceOrdersRequest,
+  ErrorResponse,
   ServiceOrders,
-  Status,
 } from '../models/index';
 import {
     CreateServiceOrdersRequestFromJSON,
     CreateServiceOrdersRequestToJSON,
+    ErrorResponseFromJSON,
+    ErrorResponseToJSON,
     ServiceOrdersFromJSON,
     ServiceOrdersToJSON,
-    StatusFromJSON,
-    StatusToJSON,
 } from '../models/index';
 
-export interface CreateServiceOrderRequest {
+export interface DeleteServiceOrderRequest {
+    id: string;
+}
+
+export interface GetServiceOrderByIdRequest {
+    id: string;
+}
+
+export interface ReplaceServiceOrderRequest {
+    id: string;
     createServiceOrdersRequest: CreateServiceOrdersRequest;
 }
 
-export interface ListServiceOrdersRequest {
-    status?: Status;
-    vehicleId?: string;
-    limit?: number;
+export interface UpdateServiceOrderRequest {
+    id: string;
+    createServiceOrdersRequest: CreateServiceOrdersRequest;
 }
 
 /**
@@ -44,14 +52,114 @@ export interface ListServiceOrdersRequest {
 export class ServiceOrdersApi extends runtime.BaseAPI {
 
     /**
-     * Adiciona uma nova ordem de serviço para um veículo específico.
-     * Cria uma nova ordem de serviço.
+     * Remove permanentemente uma Ordem de Serviço pelo seu ID.
+     * Remove uma Ordem de Serviço.
      */
-    async createServiceOrderRaw(requestParameters: CreateServiceOrderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServiceOrders>> {
+    async deleteServiceOrderRaw(requestParameters: DeleteServiceOrderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling deleteServiceOrder().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("BearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/serviceOrders/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Remove permanentemente uma Ordem de Serviço pelo seu ID.
+     * Remove uma Ordem de Serviço.
+     */
+    async deleteServiceOrder(requestParameters: DeleteServiceOrderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deleteServiceOrderRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Retorna a representação completa de uma Ordem de Serviço pelo seu ID único.
+     * Recupera os detalhes de uma Ordem de Serviço específica.
+     */
+    async getServiceOrderByIdRaw(requestParameters: GetServiceOrderByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServiceOrders>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getServiceOrderById().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("BearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/serviceOrders/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ServiceOrdersFromJSON(jsonValue));
+    }
+
+    /**
+     * Retorna a representação completa de uma Ordem de Serviço pelo seu ID único.
+     * Recupera os detalhes de uma Ordem de Serviço específica.
+     */
+    async getServiceOrderById(requestParameters: GetServiceOrderByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ServiceOrders> {
+        const response = await this.getServiceOrderByIdRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Substitui o registo completo. Requer todos os campos obrigatórios.
+     * Substitui completamente um registo de Ordem de Serviço.
+     */
+    async replaceServiceOrderRaw(requestParameters: ReplaceServiceOrderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServiceOrders>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling replaceServiceOrder().'
+            );
+        }
+
         if (requestParameters['createServiceOrdersRequest'] == null) {
             throw new runtime.RequiredError(
                 'createServiceOrdersRequest',
-                'Required parameter "createServiceOrdersRequest" was null or undefined when calling createServiceOrder().'
+                'Required parameter "createServiceOrdersRequest" was null or undefined when calling replaceServiceOrder().'
             );
         }
 
@@ -63,18 +171,19 @@ export class ServiceOrdersApi extends runtime.BaseAPI {
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("BearerAuth", ["kjshdfahskfhakjsdfhkjasdhfkadsh"]);
+            const tokenString = await token("BearerAuth", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
             }
         }
 
-        let urlPath = `/serviceOrders`;
+        let urlPath = `/serviceOrders/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
 
         const response = await this.request({
             path: urlPath,
-            method: 'POST',
+            method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: CreateServiceOrdersRequestToJSON(requestParameters['createServiceOrdersRequest']),
@@ -84,62 +193,68 @@ export class ServiceOrdersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Adiciona uma nova ordem de serviço para um veículo específico.
-     * Cria uma nova ordem de serviço.
+     * Substitui o registo completo. Requer todos os campos obrigatórios.
+     * Substitui completamente um registo de Ordem de Serviço.
      */
-    async createServiceOrder(requestParameters: CreateServiceOrderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ServiceOrders> {
-        const response = await this.createServiceOrderRaw(requestParameters, initOverrides);
+    async replaceServiceOrder(requestParameters: ReplaceServiceOrderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ServiceOrders> {
+        const response = await this.replaceServiceOrderRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Recupera uma lista paginada de todas as ordens de serviço, com opções de filtragem por status ou veículo.
-     * Lista todas as ordens de serviço.
+     * Permite atualizar um ou mais campos (Partial Update).
+     * Atualiza parcialmente os detalhes de uma Ordem de Serviço.
      */
-    async listServiceOrdersRaw(requestParameters: ListServiceOrdersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ServiceOrders>>> {
+    async updateServiceOrderRaw(requestParameters: UpdateServiceOrderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServiceOrders>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling updateServiceOrder().'
+            );
+        }
+
+        if (requestParameters['createServiceOrdersRequest'] == null) {
+            throw new runtime.RequiredError(
+                'createServiceOrdersRequest',
+                'Required parameter "createServiceOrdersRequest" was null or undefined when calling updateServiceOrder().'
+            );
+        }
+
         const queryParameters: any = {};
-
-        if (requestParameters['status'] != null) {
-            queryParameters['status'] = requestParameters['status'];
-        }
-
-        if (requestParameters['vehicleId'] != null) {
-            queryParameters['vehicleId'] = requestParameters['vehicleId'];
-        }
-
-        if (requestParameters['limit'] != null) {
-            queryParameters['limit'] = requestParameters['limit'];
-        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+        headerParameters['Content-Type'] = 'application/json';
+
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("BearerAuth", ["kjshdfahskfhakjsdfhkjasdhfkadsh"]);
+            const tokenString = await token("BearerAuth", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
             }
         }
 
-        let urlPath = `/serviceOrders`;
+        let urlPath = `/serviceOrders/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
 
         const response = await this.request({
             path: urlPath,
-            method: 'GET',
+            method: 'PATCH',
             headers: headerParameters,
             query: queryParameters,
+            body: CreateServiceOrdersRequestToJSON(requestParameters['createServiceOrdersRequest']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ServiceOrdersFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ServiceOrdersFromJSON(jsonValue));
     }
 
     /**
-     * Recupera uma lista paginada de todas as ordens de serviço, com opções de filtragem por status ou veículo.
-     * Lista todas as ordens de serviço.
+     * Permite atualizar um ou mais campos (Partial Update).
+     * Atualiza parcialmente os detalhes de uma Ordem de Serviço.
      */
-    async listServiceOrders(requestParameters: ListServiceOrdersRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ServiceOrders>> {
-        const response = await this.listServiceOrdersRaw(requestParameters, initOverrides);
+    async updateServiceOrder(requestParameters: UpdateServiceOrderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ServiceOrders> {
+        const response = await this.updateServiceOrderRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

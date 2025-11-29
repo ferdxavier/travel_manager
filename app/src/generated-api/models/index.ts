@@ -1,29 +1,33 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './serviceOrders/Category';
-export * from './reportReason/CreateDriverReportRequest';
-export * from './driver/CreateDriverRequest';
-export * from './reportReason/CreatePassengerReportRequest';
-export * from './serviceOrders/CreateServiceOrdersRequest';
-export * from './vehicle/CreateVehicleRequest';
-export * from './driver/Driver';
-export * from './reportReason/DriverReportReason';
-export * from './serviceOrders/Impact';
-export * from './serviceOrders/MaintenanceNature';
-export * from './ModelError';
-export * from './reportReason/PassengerReportReason';
-export * from './serviceOrders/Priority';
-export * from './serviceOrders/ServiceOrders';
-export * from './serviceOrders/Status';
-export * from './serviceOrders/Type';
-export * from './vehicle/UpdateVehicleRequest';
-export * from './vehicle/Vehicle';
+export * from './BaseEntityProperties';
+export * from './Category';
+export * from './CreateDriverReportRequest';
+export * from './CreateDriverRequest';
+export * from './CreatePassengerReportRequest';
+export * from './CreateServiceOrdersRequest';
+export * from './CreateVehicleRequest';
+export * from './Driver';
+export * from './DriverReportReason';
+export * from './ErrorResponse';
+export * from './Impact';
+export * from './MaintenanceNature';
+export * from './PassengerReportReason';
+export * from './Priority';
+export * from './ServiceOrders';
+export * from './Status';
+export * from './Type';
+export * from './UpdateVehicleRequest';
+export * from './ValidationErrorDetail';
+export * from './Vehicle';
+export * from './VehicleCommonProperties';
+export * from './VehicleFullBase';
 // ===================================================================================================================
-// --- DOCUMENTAÇÃO ESTRUTURADA DE SCHEMAS (Gerado por generate_ts.py) ---
+// --- DOCUMENTAÇÃO ESTRUTURADA DE SCHEMAS (Gerado por generate_all_metadata.py) ---
 // Este bloco re-exporta todas as constantes de documentação (description/example/x-ui-label) para fácil acesso em um único ponto.
 // ===================================================================================================================
 
-export * from './driver/driver_structured_docs';
-export * from './reportReason/reportReason_structured_docs';
-export * from './serviceOrders/serviceOrders_structured_docs';
-export * from './vehicle/vehicle_structured_docs';
+export * from './driver_structured_docs';
+export * from './reportReason_structured_docs';
+export * from './serviceOrders_structured_docs';
+export * from './vehicle_structured_docs';

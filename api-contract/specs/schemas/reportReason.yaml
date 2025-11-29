@@ -1,0 +1,118 @@
+# =======================================================================
+# --- DTOs para Relato Público (Passageiro e Motorista) ---
+# O objetivo é coletar dados leves para que o Backend possa agir como um
+# Agente de Triagem e decidir se cria ou não uma Ordem de Serviço (ServiceOrders).
+# =======================================================================
+
+# -----------------------------------------------------------------------
+# ENUMs de Motivos de Relato
+# -----------------------------------------------------------------------
+# Enum para Motivos de Relato de Passageiro (simples)
+PassengerReportReason:
+  type: string
+  description: "Motivo principal do relato fornecido pelo passageiro."
+  enum:
+    - DrivingBehavior # Má condução do motorista
+    - hygiene # Problemas de limpeza ou higiene
+    - defect # Algum defeito/quebra simples
+    - comfort # Problemas de conforto (AC, assento)
+    - other # Outro motivo
+  x-ui-label: "Motivo do Relato" # Novo metadado para o frontend
+  example: "defect"
+
+# Enum para Motivos de Relato de Motorista (granular, até 5 itens)
+DriverReportReason:
+  type: string
+  description: "Motivo granular do relato fornecido pelo motorista."
+  enum:
+    - dashboard_light_check_engine # Luz de injeção acesa
+    - suspension_noise # Ruído na suspensão
+    - low_tire_pressure # Pressão baixa nos pneus
+    - fluid_leak # Vazamento de fluido (óleo, água, etc.)
+    - brake_system_noise # Ruído no sistema de freios
+    - electric_failure_ac # Falha elétrica no ar condicionado
+    - bodywork_damage # Dano na carroceria/pintura
+    - interior_damage # Dano interno (assento, cinto)
+  x-ui-label: "Detalhes do Problema" # Novo metadado para o frontend
+  example: "suspension_noise"
+
+# -----------------------------------------------------------------------
+# DTO 1: Relato de Passageiro (Anónimo)
+# -----------------------------------------------------------------------
+CreatePassengerReportRequest:
+  type: object
+  description: "Dados coletados de passageiros via link público/QR Code. Anónimo e leve."
+  required:
+    - vehicleId
+    - description
+    - reportReason
+  properties:
+    vehicleId:
+      type: string
+      format: uuid
+      description: "ID do veículo (obtido via QR Code)."
+      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+      x-ui-label: "ID do Veículo" # Adicionado x-ui-label
+
+    description:
+      type: string
+      description: "Breve descrição do problema (máx. 250 caracteres)."
+      maxLength: 250
+      x-ui-label: "Descrição do Problema" # Adicionado x-ui-label
+
+    reportReason:
+      $ref: "#/PassengerReportReason"
+      description: "O motivo do relato do passageiro."
+
+    # Mídia: Mantenho como strings base64 para simplificar o DTO, mas o BE deve aceitar URIs de upload.
+    imageBase64:
+      type: string
+      description: "Imagem opcional do problema em Base64."
+      nullable: true
+      x-ui-label: "Adicionar Foto (Opcional)" # Adicionado x-ui-label
+
+    videoBase64:
+      type: string
+      description: "Vídeo curto opcional do problema em Base64 (máx. 10MB)."
+      nullable: true
+      x-ui-label: "Adicionar Vídeo (Opcional)" # Adicionado x-ui-label
+
+# -----------------------------------------------------------------------
+# DTO 2: Relato de Motorista (Detalhado)
+# -----------------------------------------------------------------------
+CreateDriverReportRequest:
+  type: object
+  description: "Dados coletados de motoristas (integrantes da empresa) via link público. Mais granular."
+  required:
+    - vehicleId
+    - userId # Motorista deve ser identificado
+    - description
+    - reportReasons
+  properties:
+    vehicleId:
+      $ref: "#/CreatePassengerReportRequest/properties/vehicleId"
+      x-ui-label: "ID do Veículo" # Adicionado x-ui-label
+
+    userId:
+      type: string
+      format: uuid
+      description: "ID do usuário do motorista. (Backend pode ignorar para triagem, mas é importante para auditoria)."
+      example: "f0e9d8c7-b6a5-4321-fedc-ba9876543210"
+      x-ui-label: "ID do Motorista" # Adicionado x-ui-label
+
+    description:
+      $ref: "#/CreatePassengerReportRequest/properties/description"
+      x-ui-label: "Descrição Detalhada" # Adicionado x-ui-label
+      
+    reportReason:
+      $ref: "#/DriverReportReason"
+      description: "O motivo do relato do motorista."
+      
+    # Mídia
+    imageBase64:
+      $ref: "#/CreatePassengerReportRequest/properties/imageBase64"
+      x-ui-label: "Adicionar Imagem (Opcional)" # Adicionado x-ui-label
+    
+    videoBase64:
+      $ref: "#/CreatePassengerReportRequest/properties/videoBase64"
+      x-ui-label: "Adicionar Vídeo Curto (Opcional)" # Adicionado x-ui-label

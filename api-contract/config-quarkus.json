@@ -1,0 +1,15 @@
+{
+  "dateLibrary": "java8",
+  "java8": true,
+  "useJakartaEe": true,
+  "javaVersion": "21",
+  "useLombok": false,
+  "interfaceOnly": true,
+  "skipDefaultInterface": false,
+  "implicitHeaders": true,
+  
+  // 💡 CORREÇÃO DE NOMENCLATURA: Força o nome do modelo gerado pelo array anónimo.
+  "modelNameMapping": {
+    "ListVehicles200ResponseInner": "Vehicle"
+  }
+}

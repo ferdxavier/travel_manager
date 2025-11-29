@@ -15,15 +15,26 @@
 
 import * as runtime from '../runtime';
 import type {
+  CreateDriverRequest,
   Driver,
+  ErrorResponse,
 } from '../models/index';
 import {
+    CreateDriverRequestFromJSON,
+    CreateDriverRequestToJSON,
     DriverFromJSON,
     DriverToJSON,
+    ErrorResponseFromJSON,
+    ErrorResponseToJSON,
 } from '../models/index';
+
+export interface CreateDriverOperationRequest {
+    createDriverRequest: CreateDriverRequest;
+}
 
 export interface ListDriversRequest {
     limit?: number;
+    offset?: number;
 }
 
 /**
@@ -32,8 +43,57 @@ export interface ListDriversRequest {
 export class DriversApi extends runtime.BaseAPI {
 
     /**
+     * Registra um novo motorista.
+     * Cria um novo motorista no sistema.
+     */
+    async createDriverRaw(requestParameters: CreateDriverOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Driver>> {
+        if (requestParameters['createDriverRequest'] == null) {
+            throw new runtime.RequiredError(
+                'createDriverRequest',
+                'Required parameter "createDriverRequest" was null or undefined when calling createDriver().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("BearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/drivers`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: CreateDriverRequestToJSON(requestParameters['createDriverRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => DriverFromJSON(jsonValue));
+    }
+
+    /**
+     * Registra um novo motorista.
+     * Cria um novo motorista no sistema.
+     */
+    async createDriver(requestParameters: CreateDriverOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Driver> {
+        const response = await this.createDriverRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Recupera uma lista paginada de todos os motoristas registados na empresa.
-     * Lista todos os motorista do empresa.
+     * Lista todos os motoristas da empresa.
      */
     async listDriversRaw(requestParameters: ListDriversRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Driver>>> {
         const queryParameters: any = {};
@@ -42,11 +102,15 @@ export class DriversApi extends runtime.BaseAPI {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
+        if (requestParameters['offset'] != null) {
+            queryParameters['offset'] = requestParameters['offset'];
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("BearerAuth", ["kjshdfahskfhakjsdfhkjasdhfkadsh"]);
+            const tokenString = await token("BearerAuth", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -67,7 +131,7 @@ export class DriversApi extends runtime.BaseAPI {
 
     /**
      * Recupera uma lista paginada de todos os motoristas registados na empresa.
-     * Lista todos os motorista do empresa.
+     * Lista todos os motoristas da empresa.
      */
     async listDrivers(requestParameters: ListDriversRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Driver>> {
         const response = await this.listDriversRaw(requestParameters, initOverrides);

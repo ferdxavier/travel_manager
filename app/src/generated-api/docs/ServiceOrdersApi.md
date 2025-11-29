@@ -4,18 +4,20 @@ All URIs are relative to *http://localhost:8080/api*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**createServiceOrder**](ServiceOrdersApi.md#createserviceorder) | **POST** /serviceOrders | Cria uma nova ordem de serviço. |
-| [**listServiceOrders**](ServiceOrdersApi.md#listserviceorders) | **GET** /serviceOrders | Lista todas as ordens de serviço. |
+| [**deleteServiceOrder**](ServiceOrdersApi.md#deleteserviceorder) | **DELETE** /serviceOrders/{id} | Remove uma Ordem de Serviço. |
+| [**getServiceOrderById**](ServiceOrdersApi.md#getserviceorderbyid) | **GET** /serviceOrders/{id} | Recupera os detalhes de uma Ordem de Serviço específica. |
+| [**replaceServiceOrder**](ServiceOrdersApi.md#replaceserviceorder) | **PUT** /serviceOrders/{id} | Substitui completamente um registo de Ordem de Serviço. |
+| [**updateServiceOrder**](ServiceOrdersApi.md#updateserviceorder) | **PATCH** /serviceOrders/{id} | Atualiza parcialmente os detalhes de uma Ordem de Serviço. |
 
 
 
-## createServiceOrder
+## deleteServiceOrder
 
-> ServiceOrders createServiceOrder(createServiceOrdersRequest)
+> deleteServiceOrder(id)
 
-Cria uma nova ordem de serviço.
+Remove uma Ordem de Serviço.
 
-Adiciona uma nova ordem de serviço para um veículo específico.
+Remove permanentemente uma Ordem de Serviço pelo seu ID.
 
 ### Example
 
@@ -24,7 +26,7 @@ import {
   Configuration,
   ServiceOrdersApi,
 } from '';
-import type { CreateServiceOrderRequest } from '';
+import type { DeleteServiceOrderRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -35,12 +37,12 @@ async function example() {
   const api = new ServiceOrdersApi(config);
 
   const body = {
-    // CreateServiceOrdersRequest | O objeto CreateServiceOrdersRequest necessário para criar a ordem.
-    createServiceOrdersRequest: ...,
-  } satisfies CreateServiceOrderRequest;
+    // string | Identificador único do recurso a ser operado (e.g., /recursos/{id}).
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
+  } satisfies DeleteServiceOrderRequest;
 
   try {
-    const data = await api.createServiceOrder(body);
+    const data = await api.deleteServiceOrder(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -56,7 +58,158 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **createServiceOrdersRequest** | [CreateServiceOrdersRequest](CreateServiceOrdersRequest.md) | O objeto CreateServiceOrdersRequest necessário para criar a ordem. | |
+| **id** | `string` | Identificador único do recurso a ser operado (e.g., /recursos/{id}). | [Defaults to `undefined`] |
+
+### Return type
+
+`void` (Empty response body)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **204** | Ordem de Serviço removida com sucesso (Sem conteúdo). |  -  |
+| **401** | Não autorizado. |  -  |
+| **404** | Ordem de Serviço não encontrada. |  -  |
+| **500** | Erro interno do servidor. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## getServiceOrderById
+
+> ServiceOrders getServiceOrderById(id)
+
+Recupera os detalhes de uma Ordem de Serviço específica.
+
+Retorna a representação completa de uma Ordem de Serviço pelo seu ID único.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ServiceOrdersApi,
+} from '';
+import type { GetServiceOrderByIdRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: BearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new ServiceOrdersApi(config);
+
+  const body = {
+    // string | Identificador único do recurso a ser operado (e.g., /recursos/{id}).
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
+  } satisfies GetServiceOrderByIdRequest;
+
+  try {
+    const data = await api.getServiceOrderById(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `string` | Identificador único do recurso a ser operado (e.g., /recursos/{id}). | [Defaults to `undefined`] |
+
+### Return type
+
+[**ServiceOrders**](ServiceOrders.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Detalhes da Ordem de Serviço recuperada. |  -  |
+| **401** | Não autorizado. |  -  |
+| **404** | Ordem de Serviço não encontrada pelo ID fornecido. |  -  |
+| **500** | Erro interno do servidor. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## replaceServiceOrder
+
+> ServiceOrders replaceServiceOrder(id, createServiceOrdersRequest)
+
+Substitui completamente um registo de Ordem de Serviço.
+
+Substitui o registo completo. Requer todos os campos obrigatórios.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ServiceOrdersApi,
+} from '';
+import type { ReplaceServiceOrderRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: BearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new ServiceOrdersApi(config);
+
+  const body = {
+    // string | Identificador único do recurso a ser operado (e.g., /recursos/{id}).
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
+    // CreateServiceOrdersRequest | O objeto CreateServiceOrdersRequest completo para substituir o recurso.
+    createServiceOrdersRequest: ...,
+  } satisfies ReplaceServiceOrderRequest;
+
+  try {
+    const data = await api.replaceServiceOrder(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `string` | Identificador único do recurso a ser operado (e.g., /recursos/{id}). | [Defaults to `undefined`] |
+| **createServiceOrdersRequest** | [CreateServiceOrdersRequest](CreateServiceOrdersRequest.md) | O objeto CreateServiceOrdersRequest completo para substituir o recurso. | |
 
 ### Return type
 
@@ -75,19 +228,21 @@ example().catch(console.error);
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **201** | Ordem de serviço criada com sucesso. Retorna o objeto ServiceOrders completo. |  -  |
-| **0** | Modelo de resposta para erros. |  -  |
+| **200** | Ordem de Serviço substituída com sucesso. |  -  |
+| **400** | Requisição inválida. Erro de validação de dados. |  -  |
+| **404** | Ordem de Serviço não encontrada. |  -  |
+| **500** | Erro interno do servidor. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## listServiceOrders
+## updateServiceOrder
 
-> Array&lt;ServiceOrders&gt; listServiceOrders(status, vehicleId, limit)
+> ServiceOrders updateServiceOrder(id, createServiceOrdersRequest)
 
-Lista todas as ordens de serviço.
+Atualiza parcialmente os detalhes de uma Ordem de Serviço.
 
-Recupera uma lista paginada de todas as ordens de serviço, com opções de filtragem por status ou veículo.
+Permite atualizar um ou mais campos (Partial Update).
 
 ### Example
 
@@ -96,7 +251,7 @@ import {
   Configuration,
   ServiceOrdersApi,
 } from '';
-import type { ListServiceOrdersRequest } from '';
+import type { UpdateServiceOrderRequest } from '';
 
 async function example() {
   console.log("🚀 Testing  SDK...");
@@ -107,16 +262,14 @@ async function example() {
   const api = new ServiceOrdersApi(config);
 
   const body = {
-    // Status | Filtra por status da ordem de serviço (ex: \'open\', \'closed\'). (optional)
-    status: ...,
-    // string | Filtra ordens de serviço associadas a um veículo específico. (optional)
-    vehicleId: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
-    // number | Número máximo de itens a retornar por página. (optional)
-    limit: 56,
-  } satisfies ListServiceOrdersRequest;
+    // string | Identificador único do recurso a ser operado (e.g., /recursos/{id}).
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
+    // CreateServiceOrdersRequest | O objeto ServiceOrdersRequest com os campos a serem modificados.
+    createServiceOrdersRequest: ...,
+  } satisfies UpdateServiceOrderRequest;
 
   try {
-    const data = await api.listServiceOrders(body);
+    const data = await api.updateServiceOrder(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -132,13 +285,12 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **status** | `Status` | Filtra por status da ordem de serviço (ex: \&#39;open\&#39;, \&#39;closed\&#39;). | [Optional] [Defaults to `undefined`] [Enum: open, in_progress, closed, canceled] |
-| **vehicleId** | `string` | Filtra ordens de serviço associadas a um veículo específico. | [Optional] [Defaults to `undefined`] |
-| **limit** | `number` | Número máximo de itens a retornar por página. | [Optional] [Defaults to `50`] |
+| **id** | `string` | Identificador único do recurso a ser operado (e.g., /recursos/{id}). | [Defaults to `undefined`] |
+| **createServiceOrdersRequest** | [CreateServiceOrdersRequest](CreateServiceOrdersRequest.md) | O objeto ServiceOrdersRequest com os campos a serem modificados. | |
 
 ### Return type
 
-[**Array&lt;ServiceOrders&gt;**](ServiceOrders.md)
+[**ServiceOrders**](ServiceOrders.md)
 
 ### Authorization
 
@@ -146,15 +298,17 @@ example().catch(console.error);
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: `application/json`
 - **Accept**: `application/json`
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Uma lista paginada de ordens de serviço. |  -  |
-| **0** | Modelo de resposta para erros. |  -  |
+| **200** | Ordem de Serviço atualizada com sucesso. Retorna o objeto atualizado. |  -  |
+| **400** | Requisição inválida. Erro de validação de dados. |  -  |
+| **404** | Ordem de Serviço não encontrada. |  -  |
+| **500** | Erro interno do servidor. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

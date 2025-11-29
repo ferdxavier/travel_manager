@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; // Adicionado para simular obtenção de query params
+import { Router } from '@angular/router'; 
 import { CreatePassengerReportRequest, PassengerReportReason, REPORTREASON_SCHEMA_DETAILS } from '../../../generated-api';
 
 // Lista de motivos de exemplo para o dropdown.
@@ -21,7 +21,7 @@ const EXAMPLE_REASONS: { label: string, value: PassengerReportReason }[] = [
     <div class="mx-auto max-w-2xl bg-white shadow-xl rounded-xl p-8 my-10 border border-gray-100">
         <header class="mb-8 border-b pb-4 text-center">
           <h1 class="text-3xl font-extrabold text-indigo-700 mb-2">
-            Relato Anônimo de Passageiro
+            Relato Anônimo de Passageiro 🗣️
           </h1>
           <p class="text-gray-600">
             Utilize este formulário para reportar problemas de forma rápida e anônima.
@@ -95,7 +95,7 @@ const EXAMPLE_REASONS: { label: string, value: PassengerReportReason }[] = [
 
             <div class="mb-4">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    {{ schema.imageBase64['x-ui-label'] }} (Base64)
+                    {{ schema.imageBase64['x-ui-label'] }} (Base64) - Máx. {{ (MAX_IMAGE_SIZE_BYTES / 1024 / 1024).toFixed(0) }}MB 
                 </label>
                 
                 <div class="flex space-x-2">
@@ -121,22 +121,17 @@ const EXAMPLE_REASONS: { label: string, value: PassengerReportReason }[] = [
                 @if (imageFile()) {
                     <p class="text-xs text-green-600 mt-2 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
-                        Imagem selecionada: {{ imageFile()!.name }} ({{ (imageFile()!.size / 1024 / 1024).toFixed(2) }} MB)
+                        Imagem selecionada: **{{ imageFile()!.name }}** ({{ (imageFile()!.size / 1024 / 1024).toFixed(2) }} MB)
                         <button type="button" (click)="clearFile('image')" class="ml-2 text-red-500 hover:text-red-700 text-sm font-semibold">
                             (X)
                         </button>
-                    </p>
-                }
-                @if (errorAttachment()) {
-                    <p class="text-red-600 text-xs mt-1">
-                        {{ errorAttachment() }}
                     </p>
                 }
             </div>
             
             <div class="mt-6">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
-                    {{ schema.videoBase64['x-ui-label'] }} (Multipart)
+                    {{ schema.videoBase64['x-ui-label'] }} (Multipart) - Máx. {{ (MAX_VIDEO_SIZE_BYTES / 1024 / 1024).toFixed(0) }}MB
                 </label>
                 
                 <div class="flex space-x-2">
@@ -162,13 +157,19 @@ const EXAMPLE_REASONS: { label: string, value: PassengerReportReason }[] = [
                 @if (videoFile()) {
                     <p class="text-xs text-green-600 mt-2 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
-                        Vídeo selecionado: {{ videoFile()!.name }} ({{ (videoFile()!.size / 1024 / 1024).toFixed(2) }} MB)
+                        Vídeo selecionado: **{{ videoFile()!.name }}** ({{ (videoFile()!.size / 1024 / 1024).toFixed(2) }} MB)
                         <button type="button" (click)="clearFile('video')" class="ml-2 text-red-500 hover:text-red-700 text-sm font-semibold">
                             (X)
                         </button>
                     </p>
                 }
             </div>
+            
+            @if (errorAttachment()) {
+                <p class="text-red-600 text-xs mt-3 font-medium border-t pt-2 border-red-200">
+                    ⚠️ {{ errorAttachment() }}
+                </p>
+            }
           </div>
 
 
@@ -176,7 +177,7 @@ const EXAMPLE_REASONS: { label: string, value: PassengerReportReason }[] = [
             <button
               type="submit"
               [disabled]="isSubmitting()" 
-              class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
             >
               @if (isSubmitting()) {
                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -208,7 +209,6 @@ const EXAMPLE_REASONS: { label: string, value: PassengerReportReason }[] = [
 })
 export class NewPassengerReportComponent implements OnInit {
   private fb = inject(FormBuilder);
-  // private router = inject(Router); // <--- Descomente se for usar query params de verdade
   
   @ViewChild('imageCameraInput') imageCameraInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('imageGalleryInput') imageGalleryInputRef!: ElementRef<HTMLInputElement>;
@@ -227,29 +227,24 @@ export class NewPassengerReportComponent implements OnInit {
   imageFile = signal<File | null>(null);
   videoFile = signal<File | null>(null);
   
-  readonly MAX_VIDEO_SIZE_BYTES = 10485760; // 10MB
+  readonly MAX_VIDEO_SIZE_BYTES = 31457280; // 30MB
   readonly MAX_IMAGE_SIZE_BYTES = 5242880;  // 5MB 
 
-  // Variável de controle para os botões de câmera
   isMobileDevice: boolean = false; 
 
   ngOnInit(): void {
-    // 1. Verifica se o ambiente é móvel (simulação)
     this.checkIfMobile();
     
-    // 2. Mockando o ID do Veículo da URL
-    // const vehicleIdFromUrl = this.router.snapshot.queryParamMap.get('vehicleId');
     const mockedVehicleIdFromUrl = 'A1B2C3D4-E5F6-7890-1234-567890ABCDEF';
 
     this.reportForm = this.fb.group({
       vehicleId: [
         { 
-          value: mockedVehicleIdFromUrl, // Valor da URL (mockado)
-          disabled: true                  // Desativado para edição
+          value: mockedVehicleIdFromUrl, 
+          disabled: true                  
         },
         [
           Validators.required,
-          // Validators.pattern(/^[0-9a-fA-F-]+$/) // Removido
         ],
       ],
       reportReason: [null, [Validators.required]],
@@ -263,10 +258,6 @@ export class NewPassengerReportComponent implements OnInit {
     });
   }
   
-  /**
-   * Verifica o User Agent para determinar se é um dispositivo móvel.
-   * Isso é usado para exibir os botões "Câmera" (capture="environment").
-   */
   private checkIfMobile(): void {
     const userAgent = navigator.userAgent.toLowerCase();
     this.isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
@@ -281,17 +272,17 @@ export class NewPassengerReportComponent implements OnInit {
         }
     } else if (type === 'video') {
         if (useCamera) {
-            this.videoCameraInputRef.nativeElement.click(); // ✅ Correção: Removido o 'Input' extra
+            this.videoCameraInputRef.nativeElement.click(); 
         } else {
             this.videoGalleryInputRef.nativeElement.click();
         }
     }
   }
   
-  clearFile(type: 'image' | 'video'): void {
+  // ✅ CORREÇÃO APLICADA AQUI: Adiciona shouldClearError (padrão é TRUE)
+  clearFile(type: 'image' | 'video', shouldClearError: boolean = true): void {
     if (type === 'image') {
       this.imageFile.set(null);
-      // Garante que o input file seja limpo para permitir seleção do mesmo arquivo novamente
       this.imageCameraInputRef.nativeElement.value = '';
       this.imageGalleryInputRef.nativeElement.value = '';
     } else {
@@ -299,13 +290,13 @@ export class NewPassengerReportComponent implements OnInit {
       this.videoCameraInputRef.nativeElement.value = '';
       this.videoGalleryInputRef.nativeElement.value = '';
     }
-    this.errorAttachment.set(null);
+    
+    if (shouldClearError) {
+        this.errorAttachment.set(null);
+    }
   }
 
-  /**
-   * Converte APENAS A IMAGEM em uma string Base64.
-   */
-  private fileToBase64(file: File): Promise<string> {
+  private fileToBase64(file: File): Promise<string | undefined> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
@@ -315,10 +306,14 @@ export class NewPassengerReportComponent implements OnInit {
              console.log('✅ Conversão da IMAGEM para Base64 CONCLUÍDA.');
              resolve(base64String);
         } else {
-             reject(new Error('Falha ao processar o arquivo de imagem.'));
+             console.error('Falha ao processar o arquivo de imagem.');
+             resolve(undefined);
         }
       };
-      reader.onerror = error => reject(error);
+      reader.onerror = error => {
+          console.error('Erro de leitura de arquivo:', error);
+          resolve(undefined);
+      }
       reader.readAsDataURL(file);
     });
   }
@@ -331,7 +326,7 @@ export class NewPassengerReportComponent implements OnInit {
       const maxSize = type === 'video' ? this.MAX_VIDEO_SIZE_BYTES : this.MAX_IMAGE_SIZE_BYTES;
       const maxSizeMB = (maxSize / 1024 / 1024).toFixed(0);
 
-      // Limpeza dos inputs de arquivo (para evitar duplicidade)
+      // Limpa o input oposto (câmera vs. galeria)
       if (type === 'image') {
         if (input.id === 'imageCamera') this.imageGalleryInputRef.nativeElement.value = '';
         if (input.id === 'imageGallery') this.imageCameraInputRef.nativeElement.value = '';
@@ -340,16 +335,27 @@ export class NewPassengerReportComponent implements OnInit {
         if (input.id === 'videoGallery') this.videoCameraInputRef.nativeElement.value = '';
       }
 
+      // Validação de Tamanho
       if (file.size > maxSize) {
+        // Define o erro 
         this.errorAttachment.set(`O ${type === 'video' ? 'vídeo' : 'arquivo'} excede o limite de ${maxSizeMB}MB.`);
-        this.clearFile(type);
+        // ✅ CORREÇÃO APLICADA AQUI: Limpa o arquivo, mas MANTÉM o erro no signal.
+        this.clearFile(type, false); 
         return;
       }
       
-      // Armazena o objeto File
-      if (type === 'image') this.imageFile.set(file); else this.videoFile.set(file);
+      // Se for válido, salva o arquivo e limpa o erro.
+      if (type === 'image') {
+          this.imageFile.set(file);
+          this.videoFile.set(null); 
+      } else {
+          this.videoFile.set(file);
+          this.imageFile.set(null); 
+      }
+      this.errorAttachment.set(null); // Limpa qualquer erro anterior se a seleção for válida.
 
     } else {
+      // Se a seleção for cancelada e não houver um arquivo pré-selecionado
       if (type === 'image' && !this.imageFile()) this.imageFile.set(null); 
       if (type === 'video' && !this.videoFile()) this.videoFile.set(null);
     }
@@ -360,7 +366,7 @@ export class NewPassengerReportComponent implements OnInit {
     this.submissionStatus.set('idle');
     this.isSubmitting.set(true); 
 
-    // O getRawValue é usado aqui para obter o vehicleId DESATIVADO
+    // Validação final do formulário e do anexo (tamanho, etc.)
     if (!this.reportForm.valid || this.errorAttachment()) {
         this.reportForm.markAllAsTouched();
         console.error('❌ ERRO DE VALIDAÇÃO: Formulário inválido.');
@@ -370,26 +376,32 @@ export class NewPassengerReportComponent implements OnInit {
         return; 
     }
 
-    // Obtém todos os valores, incluindo o campo disabled (vehicleId)
     const formRawValue = this.reportForm.getRawValue();
     const vehicleIdValue = formRawValue.vehicleId.toUpperCase();
 
     try {
-        let imageBase64: string | undefined = undefined;
+        let imageBase64Data: string | undefined = undefined;
         let videoFile: File | undefined = this.videoFile() || undefined; 
 
-        // 1. Processa a Imagem (Base64)
+        // --- 1. PROCESSAMENTO DOS ANEXOS ---
+
+        // 1.1 Imagem: Se existir, converte para Base64.
         if (this.imageFile()) {
             console.log('Convertendo imagem para Base64...');
-            imageBase64 = await this.fileToBase64(this.imageFile()!);
+            imageBase64Data = await this.fileToBase64(this.imageFile()!);
         }
-
+        
         // 2. Monta o DTO (JSON)
         const reportData: CreatePassengerReportRequest = {
-            vehicleId: vehicleIdValue, // Usando o valor RAW
+            vehicleId: vehicleIdValue,
             description: formRawValue.description,
             reportReason: formRawValue.reportReason,
-            imageBase64: imageBase64,
+            
+            // Se imageBase64Data for string, inclui; se for undefined, omite.
+            imageBase64: imageBase64Data, 
+            
+            // videoBase64 é 'undefined' no JSON.
+            videoBase64: undefined, 
         };
 
         // 3. Cria o objeto FormData para enviar a requisição
@@ -401,25 +413,30 @@ export class NewPassengerReportComponent implements OnInit {
         // 4. TRATAMENTO DO VÍDEO (Multipart)
         if (videoFile) {
             console.log('--- DEPURANDO ANEXO DE VÍDEO ---');
-            console.log('Nome do Arquivo:', videoFile.name);
-            console.log('Tipo MIME Original:', videoFile.type);
-            console.log('Tamanho (Bytes):', videoFile.size);
-
-            if (!videoFile.type || videoFile.type === 'application/octet-stream') {
-                console.warn('Tipo MIME de vídeo genérico/ausente. Tentando re-anexar como video/mp4.');
-                const videoBlob = new Blob([videoFile], { type: 'video/mp4' });
-                formData.append('video', videoBlob, videoFile.name);
+            console.log('Nome do Arquivo Original:', videoFile.name);
+            console.log('Tipo MIME Original:', videoFile.type || 'desconhecido');
+            
+            let fileToAppend: File | Blob = videoFile;
+            let fileName = videoFile.name;
+            
+            // ✅ CORREÇÃO ROBUSTA APLICADA: Força o Content-Type para MP4 se o nome sugerir.
+            if (fileName.toLowerCase().endsWith('.mp4')) {
+                fileToAppend = new Blob([videoFile], { type: 'video/mp4' });
+                console.log(`⚠️ Forçando o anexo a ser um Blob com Content-Type: video/mp4`);
             } else {
-                formData.append('video', videoFile, videoFile.name);
+                 console.log(`Usando tipo MIME original: ${videoFile.type || 'desconhecido'}`);
             }
+            
+            formData.append('video', fileToAppend, fileName);
             console.log('✅ Vídeo anexado ao FormData.');
         } else {
             console.log('Vídeo opcional não selecionado.');
         }
         
-        console.log('Dados do Formulário (FormData) prontos para envio (Simulação API):', formData);
+        console.log('Dados do Formulário (DTO JSON) prontos para envio (Simulação API):', reportData);
 
         // --- SIMULAÇÃO de Chamada API COM FormData ---
+        // Aqui você faria a chamada real usando o HttpClient
         await new Promise(resolve => setTimeout(resolve, 2000)); 
 
         this.submissionStatus.set('success');
@@ -428,9 +445,8 @@ export class NewPassengerReportComponent implements OnInit {
         this.reportForm.reset({
             reportReason: null, 
             description: ''
-            // Não limpamos vehicleId, pois ele é setado pela URL/mock
         });
-        this.reportForm.get('vehicleId')?.setValue(vehicleIdValue); // Restaura o ID desativado
+        this.reportForm.get('vehicleId')?.setValue(vehicleIdValue); 
         this.submitted.set(false);
         this.clearFile('image'); 
         this.clearFile('video'); 
@@ -443,12 +459,8 @@ export class NewPassengerReportComponent implements OnInit {
     }
   }
 
-  /**
-   * Função para logar e identificar a causa exata da falha de validação do Angular.
-   */
   private logValidationErrors(): void {
     Object.keys(this.reportForm.controls).forEach(key => {
-      // Usamos .get(key) no rawValue, que é mais confiável em forms com campos disabled
       const control = this.reportForm.get(key); 
       
       if (control && control.errors) {

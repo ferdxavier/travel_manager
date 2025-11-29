@@ -2,8 +2,10 @@
 ├── openapi.yaml             <-- Ficheiro Principal (Entry Point)
 └── specs/
     ├── paths/
-    │   ├── drivers.yaml     <-- Definição do path /drivers
-    │   └── vehicles.yaml    <-- Definição do path /vehicles
+        ├── drivers/
+        |   └── drivers.yaml    <-- Definição do path /drivers
+        └── vehicles/
+            └── vehicles.yaml    <-- Definição do path /vehicles
     ├── schemas/
     │   ├── common_error.yaml<-- Esquema de Erro
     │   ├── driver.yaml      <-- Esquemas Driver e CreateDriverRequest

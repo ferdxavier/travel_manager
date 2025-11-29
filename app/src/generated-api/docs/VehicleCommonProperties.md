@@ -35,7 +35,7 @@ import type { VehicleCommonProperties } from ''
 const example = {
   "licensePlate": ABC1F34,
   "model": 520 HP,
-  "vehicleManufacturer": Scânia,
+  "vehicleManufacturer": Scania,
   "modelYear": 2024,
   "manufacturerYear": 2023,
   "renavan": 4566546465,

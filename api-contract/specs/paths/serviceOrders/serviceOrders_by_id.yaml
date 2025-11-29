@@ -1,0 +1,185 @@
+# Definição das Operações para o recurso /serviceOrders/{id} (Recurso Singular)
+
+parameters: # Define o parâmetro {id} usado no path
+  # O ID do recurso é obtido usando a definição reutilizável (ResourceIdPath)
+  - $ref: "../../common/parameters.yaml#/ResourceIdPath"
+
+get:
+  summary: "Recupera os detalhes de uma Ordem de Serviço específica."
+  description: "Retorna a representação completa de uma Ordem de Serviço pelo seu ID único."
+  # CORRIGIDO: operationId único
+  operationId: getServiceOrderById 
+  tags:
+    - ServiceOrders
+
+  # Esta rota requer autenticação
+  security:
+    - BearerAuth: []
+
+  responses:
+    "200":
+      description: "Detalhes da Ordem de Serviço recuperada."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/serviceOrders.yaml#/ServiceOrders" 
+
+    # Tratamento de Erros
+    "401":
+      description: "Não autorizado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "404":
+      description: "Ordem de Serviço não encontrada pelo ID fornecido."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+put:
+  summary: "Substitui completamente um registo de Ordem de Serviço."
+  description: "Substitui o registo completo. Requer todos os campos obrigatórios."
+  # CORRIGIDO: operationId único
+  operationId: replaceServiceOrder
+  tags:
+    - ServiceOrders
+    
+  security:
+    - BearerAuth: []
+
+  requestBody:
+    description: "O objeto CreateServiceOrdersRequest completo para substituir o recurso."
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/serviceOrders.yaml#/CreateServiceOrdersRequest" 
+
+  responses:
+    "200":
+      description: "Ordem de Serviço substituída com sucesso."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/serviceOrders.yaml#/ServiceOrders"
+
+    # Tratamento de Erros
+    "400":
+      description: "Requisição inválida. Erro de validação de dados."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "404":
+      description: "Ordem de Serviço não encontrada."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+
+patch:
+  summary: "Atualiza parcialmente os detalhes de uma Ordem de Serviço."
+  description: "Permite atualizar um ou mais campos (Partial Update)."
+  # CORRIGIDO: operationId único
+  operationId: updateServiceOrder
+  tags:
+    - ServiceOrders
+    
+  security:
+    - BearerAuth: []
+
+  requestBody:
+    description: "O objeto ServiceOrdersRequest com os campos a serem modificados."
+    required: true
+    content:
+      application/json:
+        schema:
+          # Assumindo que CreateServiceOrdersRequest pode ser usado para PATCH
+          $ref: "../../schemas/serviceOrders.yaml#/CreateServiceOrdersRequest" 
+
+  responses:
+    "200":
+      description: "Ordem de Serviço atualizada com sucesso. Retorna o objeto atualizado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/serviceOrders.yaml#/ServiceOrders"
+
+    # Tratamento de Erros
+    "400":
+      description: "Requisição inválida. Erro de validação de dados."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "404":
+      description: "Ordem de Serviço não encontrada."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+
+delete:
+  summary: "Remove uma Ordem de Serviço."
+  description: "Remove permanentemente uma Ordem de Serviço pelo seu ID."
+  # CORRIGIDO: operationId único
+  operationId: deleteServiceOrder
+  tags:
+    - ServiceOrders
+    
+  security:
+    - BearerAuth: []
+
+  responses:
+    "204":
+      description: "Ordem de Serviço removida com sucesso (Sem conteúdo)."
+    
+    # Tratamento de Erros
+    "401":
+      description: "Não autorizado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+            
+    "404":
+      description: "Ordem de Serviço não encontrada."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"

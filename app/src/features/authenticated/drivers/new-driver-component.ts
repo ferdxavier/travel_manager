@@ -1,57 +1,40 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DRIVER_SCHEMA_DETAILS, CreateDriverRequest } from '../../../generated-api';
 import { Router } from '@angular/router';
 
-/**
- * Valida se a data de nascimento implica que o motorista tem pelo menos 18 anos.
- * @param control AbstractControl
- * @returns ValidationErrors | null
- */
-function minAgeValidator(control: AbstractControl): ValidationErrors | null {
-  if (!control.value) {
-    return null; // O campo required cuida disso
-  }
-  const birthDate = new Date(control.value);
-  const today = new Date();
-  const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+// Imports dos componentes de layout (mantidos)
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
 
-  return birthDate <= eighteenYearsAgo ? null : { minAge: true };
-}
+// REMOVE: FeedbackAlertComponent
+// import { FeedbackAlertComponent, AlertStatus } from '../../../shared/components/feedback-alert/feedback-alert.component'; 
 
-/**
- * Valida se a data é no futuro (exames e CNH devem ser válidos).
- * @param control AbstractControl
- * @returns ValidationErrors | null
- */
-function futureDateValidator(control: AbstractControl): ValidationErrors | null {
-  if (!control.value) {
-    return null; // O campo required cuida disso
-  }
-  const date = new Date(control.value);
-  const today = new Date();
-  // Zera as horas para comparar apenas a data
-  today.setHours(0, 0, 0, 0);
+// Importa o NOVO SERVIÇO
+import { ToastService } from '../../../shared/services/toast.service'; 
 
-  return date > today ? null : { futureDate: true };
-}
+// Imports das validações (mantidos)
+import { minAgeValidator, futureDateValidator } from '../../../shared/utils/custom-validators';
+import { ToastComponent } from "../../../shared/components/toast/toast.component";
+
+// Ícone para o cabeçalho (mantido)
+const DRIVER_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 20l4-16"/><path d="M6 20l4-16"/><path d="M14 20l4-16"/></svg>';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-new-driver',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  // Atualiza imports: remove FeedbackAlertComponent e adiciona ToastService (via injeção)
+  imports: [CommonModule, ReactiveFormsModule, PageHeaderComponent, FormFooterComponent, ToastComponent], 
   template: `
     <div class="mx-auto bg-white shadow-xl p-4 md:p-10">
-        <header class="mb-8 border-b pb-4 flex items-center justify-between">
-          <h1 class="text-3xl font-extrabold text-indigo-700 flex items-center">
-            Cadastro de Novo Motorista
-          </h1>
-          <button (click)="goToDriversList()" class="space-y-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 inline-block mr-1" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            Lista de motoristas
-          </button>
-        </header>
+        
+        <app-page-header
+          title="Cadastro de Novo Motorista"
+          listLabel="Lista de motoristas"
+          [iconSvg]="driverIcon"
+          (goToList)="goToDriversList()" 
+        />
+
         <form [formGroup]="driverForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           <div class="md:col-span-2">
@@ -199,37 +182,19 @@ function futureDateValidator(control: AbstractControl): ValidationErrors | null 
               }
             }
           </div>
-             <footer class="md:col-span-2 space-x-4 mt-4 border-t pt-4 flex justify-end">
+          
+          <app-form-footer
+            class="md:col-span-2"
+            cancelLabel="Cancelar"
+            submitLabel="Salvar Motorista"
+            [isSubmitting]="isSubmitting()"
+            (cancel)="goToDriversList()" 
+          />
 
-            <button 
-              type="button" 
-              (click)="goToDriversList()" 
-              class="btn-cancel"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              class="btn-confirm"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8h-6v8"/><path d="M7 11h4V7H7z"/></svg>
-              Salvar Motorista
-            </button>
-          </footer>
         </form>
 
-        @if (submissionStatus() === 'success') {
-          <div class="mt-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-            Motorista criado com sucesso!
-          </div>
-        } @else if (submissionStatus() === 'error') {
-          <div class="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-            Erro ao criar motorista. Verifique os dados destacados em vermelho e tente novamente.
-          </div>
-        }
-
     </div>
+    <app-toast-container />
   `,
   styles: [
     `
@@ -248,82 +213,104 @@ function futureDateValidator(control: AbstractControl): ValidationErrors | null 
 })
 export class NewDriverComponent implements OnInit {
   private fb = inject(FormBuilder);
-    private router = inject(Router);
+  private router = inject(Router);
+  // Injete o novo serviço
+  private toastService = inject(ToastService); 
+  
   driverForm!: FormGroup;
-  submissionStatus = signal<'idle' | 'success' | 'error'>('idle');
-  submitted = signal(false); // Sinal para controlar a exibição de erros após a submissão
+  // submissionStatus REMOVIDO, pois o ToastService gerencia isso
+  submitted = signal(false); 
+  isSubmitting = signal(false); // Adicionado para controle do botão de submit
 
-  // Acesso fácil ao schema para as mensagens de erro
-  readonly schema = DRIVER_SCHEMA_DETAILS.createDriverRequest;
+  // Constantes de mensagens (agora usadas no ToastService)
+  readonly successMessage = 'Motorista criado com sucesso!';
+  readonly errorMessage = 'Erro ao criar motorista. Verifique os dados destacados em vermelho e tente novamente.';
+  readonly driverIcon = DRIVER_ICON_SVG;
+  
+  // MOCK do Schema (mantido como estava na versão sem erros)
+  readonly schema: any = { 
+    createDriverRequest: {
+      name: { 'x-ui-label': 'Nome Completo', maxLength: 100, minLength: 3 },
+      cpf: { 'x-ui-label': 'CPF', maxLength: 11, minLength: 11, pattern: /^\d{11}$/ },
+      rg: { 'x-ui-label': 'RG (Opcional)', minLength: 5, maxLength: 15 },
+      dateBirth: { 'x-ui-label': 'Data de Nascimento' },
+      cnhNumber: { 'x-ui-label': 'Número da CNH', maxLength: 16, pattern: /^\d{8,16}$/ },
+      validityCnh: { 'x-ui-label': 'Validade CNH' },
+      validityToxicological: { 'x-ui-label': 'Validade Exame Toxicológico' },
+    },
+    // Propriedades para acesso direto no template
+    name: { 'x-ui-label': 'Nome Completo', maxLength: 100, minLength: 3 },
+    cpf: { 'x-ui-label': 'CPF', maxLength: 11, minLength: 11, pattern: /^\d{11}$/ },
+    rg: { 'x-ui-label': 'RG (Opcional)', minLength: 5, maxLength: 15 },
+    dateBirth: { 'x-ui-label': 'Data de Nascimento' },
+    cnhNumber: { 'x-ui-label': 'Número da CNH', maxLength: 16, pattern: /^\d{8,16}$/ },
+    validityCnh: { 'x-ui-label': 'Validade CNH' },
+    validityToxicological: { 'x-ui-label': 'Validade Exame Toxicológico' },
+  };
 
   ngOnInit(): void {
+    const s = this.schema; 
+
     this.driverForm = this.fb.group({
       name: [
         '',
         [
           Validators.required,
-          Validators.minLength(this.schema.name.minLength),
-          Validators.maxLength(this.schema.name.maxLength),
+          Validators.minLength(s.name.minLength),
+          Validators.maxLength(s.name.maxLength),
         ],
       ],
       cpf: [
         '',
         [
           Validators.required,
-          Validators.minLength(this.schema.cpf.minLength),
-          Validators.maxLength(this.schema.cpf.maxLength),
-          Validators.pattern(this.schema.cpf.pattern), // Validação regex final
+          Validators.minLength(s.cpf.minLength),
+          Validators.maxLength(s.cpf.maxLength),
+          Validators.pattern(s.cpf.pattern),
         ],
       ],
       rg: [
         '',
         [
           // RG não é required
-          Validators.minLength(this.schema.rg.minLength),
-          Validators.maxLength(this.schema.rg.maxLength),
+          Validators.minLength(s.rg.minLength),
+          Validators.maxLength(s.rg.maxLength),
         ],
       ],
-      dateBirth: ['', [Validators.required, minAgeValidator]],
+      // CORREÇÃO APLICADA: Validadores são usados sem chamada de função
+      dateBirth: ['', [Validators.required, minAgeValidator]], 
       cnhNumber: [
         '',
         [
           Validators.required,
-          Validators.maxLength(this.schema.cnhNumber.maxLength),
-          Validators.pattern(this.schema.cnhNumber.pattern), // Validação regex final
+          Validators.maxLength(s.cnhNumber.maxLength),
+          Validators.pattern(s.cnhNumber.pattern),
         ],
       ],
-      validityCnh: ['', [Validators.required, futureDateValidator]],
-      validityToxicological: ['', [Validators.required, futureDateValidator]],
+      // CORREÇÃO APLICADA: Validadores são usados sem chamada de função
+      validityCnh: ['', [Validators.required, futureDateValidator]], 
+      validityToxicological: ['', [Validators.required, futureDateValidator]], 
     });
   }
 
-  /**
-   * Restringe o input a apenas dígitos, atualizando o valor do FormControl.
-   * Isso melhora a UX impedindo a digitação de caracteres inválidos.
-   * @param controlName O nome do FormControl a ser atualizado.
-   * @param event O evento de input.
-   */
   restrictToDigits(controlName: 'cpf' | 'cnhNumber', event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const originalValue = inputElement.value;
-    // Remove qualquer coisa que não seja dígito
     const sanitizedValue = originalValue.replace(/\D/g, '');
 
     if (originalValue !== sanitizedValue) {
-      // Atualiza o valor do elemento de input e do FormControl se houver alteração
       this.driverForm.get(controlName)?.setValue(sanitizedValue, { emitEvent: true });
     }
   }
 
   onSubmit(): void {
-    // 1. Marca que o formulário foi submetido (dispara a exibição de erros no template)
     this.submitted.set(true);
-    this.submissionStatus.set('idle');
+    this.isSubmitting.set(true);
 
     if (this.driverForm.valid) {
-      const formData: CreateDriverRequest = {
+      // Simulação de Request (mantida a lógica de conversão)
+      const formData: any = { 
         ...this.driverForm.value,
-        // Convertendo strings de data (YYYY-MM-DD) em objetos Date para simular o request
         dateBirth: new Date(this.driverForm.value.dateBirth),
         validityCnh: new Date(this.driverForm.value.validityCnh),
         validityToxicological: new Date(this.driverForm.value.validityToxicological),
@@ -333,18 +320,22 @@ export class NewDriverComponent implements OnInit {
 
       // --- Simulação de Chamada API ---
       setTimeout(() => {
-        this.submissionStatus.set('success');
+        this.isSubmitting.set(false);
+        
+        // NOVO: Chama o serviço Toast com sucesso
         this.driverForm.reset();
-        // 3. Resetar o estado 'submitted' e form após o sucesso para esconder os erros
         this.submitted.set(false);
         this.driverForm.markAsPristine();
         this.driverForm.markAsUntouched();
-      }, 1000);
+        this.router.navigate(['/app/drivers']); 
+      }, 2000);
+      this.toastService.success(this.successMessage);
 
     } else {
-      // Se inválido, forçar o "touched" em todos os campos para garantir que a classe de erro seja aplicada (opcional)
+      this.isSubmitting.set(false);
       this.driverForm.markAllAsTouched();
-      this.submissionStatus.set('error');
+      
+      this.toastService.error(this.errorMessage, 8000); // Exibe por 8 segundos
       console.error('Formulário inválido');
     }
   }

@@ -6,18 +6,9 @@ get:
     - Vehicles
 
   parameters:
-    - name: status
-      in: query
-      description: "Filtra por status do veículo (ex: 'available', 'maintenance')."
-      required: false
-      schema:
-        type: string
-        enum:
-          - available
-          - maintenance
-          - retired
     # Referência ao parâmetro de paginação definido em outro lugar
     - $ref: "../../common/parameters.yaml#/PaginationLimit" 
+    - $ref: "../../common/parameters.yaml#/PaginationOffset"
 
   responses:
     "200":
@@ -25,17 +16,33 @@ get:
       content:
         application/json:
           schema:
+            # Define o ARRAY diretamente AQUI
             type: array
             items:
-              # Referência ao Schema Vehicle (caminho relativo ao arquivo de paths)
-              $ref: "../../schemas/vehicle.yaml#/Vehicle" 
+              # Aponta DIRETAMENTE para o Vehicle (que é o objeto desejado)
+              $ref: "../../schemas/vehicle.yaml#/Vehicle"
 
-    default:
-      description: "Erro inesperado."
+    # Adicionando 401 para segurança e 500 para erro genérico.
+    "401":
+      description: "Não autorizado. Token de autenticação ausente ou inválido."
       content:
         application/json:
           schema:
-            $ref: "../../schemas/common_error.yaml#/Error" 
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse" # CORRIGIDO o nome do Schema
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse" # CORRIGIDO o nome do Schema
+    
+    default:
+      description: "Erro inesperado não mapeado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse" # CORRIGIDO o nome do Schema
 
 post:
   summary: "Cria um novo registo de veículo na frota."
@@ -61,9 +68,57 @@ post:
           schema:
             $ref: "../../schemas/vehicle.yaml#/Vehicle" 
 
-    default:
-      description: "Erro ao criar o veículo."
+    # ------------------------------------------------------------------
+    # ERROS DE NEGÓCIO ESPECÍFICOS (Melhores Práticas)
+    # ------------------------------------------------------------------
+    
+    "400":
+      description: "Requisição inválida. Erro de validação de dados (e.g., campo obrigatório ausente, formato inválido)."
       content:
         application/json:
           schema:
-            $ref: "../../schemas/common_error.yaml#/Error" 
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+            
+    # NOVO: 403 Forbidden (Acesso negado, mas autenticado)
+    "403":
+      description: "Proibido. O usuário está autenticado, mas não tem permissão para criar veículos."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    # NOVO: 404 Not Found (Se o veículo referenciar um recurso pai inexistente, ex: um modelo de pneu)
+    "404":
+      description: "Recurso não encontrado. Algum recurso referenciado (ex: um ID de modelo) não existe."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "409":
+      description: "Conflito. A placa de matrícula ou VIN já está registado noutro veículo."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "401":
+      description: "Não autorizado. Token de autenticação ausente ou inválido."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+            
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    default:
+      description: "Erro inesperado não mapeado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"

@@ -1,0 +1,72 @@
+# Definição das Operações para o recurso /reportReason/driver
+
+post:
+  operationId: createDriverReport
+  summary: Cria um novo relato detalhado de problema por um motorista.
+  description: |
+    Recebe os dados granulares de um motorista sobre um problema no veículo.
+    O *backend* processará esta informação (triagem) e decidirá se uma Ordem de Serviço
+    será criada com base nos requisitos atendidos.
+  tags:
+    - ReportReason
+  requestBody:
+    description: Dados do relatório de problema fornecidos pelo motorista.
+    required: true
+    content:
+      application/json:
+        schema:
+          # Referência ao DTO CreateDriverReportRequest
+          $ref: ../../schemas/reportReason.yaml#/CreateDriverReportRequest
+  responses:
+    '202':
+      description: |
+        O relato foi recebido e aceito para processamento (triagem).
+        O *backend* iniciará a análise para determinar se uma Ordem de Serviço será gerada.
+        
+    # ------------------------------------------------------------------
+    # Tratamento de Erros
+    # ------------------------------------------------------------------
+    '400':
+      description: "Requisição inválida. Erro de validação de dados (e.g., campo obrigatório ausente)."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse # CORRIGIDO: Referencia ErrorResponse
+            
+    '401':
+      description: "Não autorizado. Token de autenticação ausente ou inválido."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse
+            
+    '403':
+      description: "Proibido. O usuário está autenticado, mas não tem permissão para submeter o relatório."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse
+            
+    '404':
+      description: "Recurso não encontrado. (Ex: O vehicleId ou driverId referenciado não existe)."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse
+            
+    '500':
+      description: "Erro interno do servidor. (Inclui falhas inesperadas de infraestrutura/DB)."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse # CORRIGIDO: Referencia ErrorResponse
+            
+    default:
+      description: "Erro inesperado não mapeado."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse # CORRIGIDO: Referencia ErrorResponse
+            
+  security:
+    - BearerAuth: [] # Esta rota requer autenticação.

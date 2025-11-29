@@ -1,0 +1,27 @@
+# Configuração para o OpenAPI Generator para o projeto api-service
+configOptions:
+  # --- COORDENADAS E VERSÃO DE PROJETO ---
+  groupId: com.travelmanager
+  artifactId: api-service
+  artifactVersion: 1.0.0
+  projectName: api-service
+  projectDescription: Travel manager project for Spring Boot
+  
+  # --- VERSÃO DO JAVA ---
+  javaVersion: 21
+  java8: false
+  
+  # --- CONFIGURAÇÃO DE PACOTES ---
+  basePackage: com.travelmanager.api.service
+  apiPackage: com.travelmanager.api.service.api
+  modelPackage: com.travelmanager.api.service.model
+  configPackage: com.travelmanager.api.service.config
+  
+  # --- CONFIGURAÇÕES DE FRAMEWORK ---
+  library: spring-boot
+  useJakartaEe: true
+  delegatePattern: true
+  dateLibrary: java8
+  java21: true
+  useBeanValidation: true
+  openApiFile: true

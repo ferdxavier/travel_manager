@@ -11,8 +11,6 @@ Name | Type
 `userId` | string
 `description` | string
 `reportReason` | [DriverReportReason](DriverReportReason.md)
-`odometerReading` | number
-`locationCoordinates` | string
 `imageBase64` | string
 `videoBase64` | string
 
@@ -27,8 +25,6 @@ const example = {
   "userId": f0e9d8c7-b6a5-4321-fedc-ba9876543210,
   "description": null,
   "reportReason": null,
-  "odometerReading": 125430,
-  "locationCoordinates": null,
   "imageBase64": null,
   "videoBase64": null,
 } satisfies CreateDriverReportRequest

@@ -16,12 +16,15 @@
 import * as runtime from '../runtime';
 import type {
   CreateVehicleRequest,
+  ErrorResponse,
   UpdateVehicleRequest,
   Vehicle,
 } from '../models/index';
 import {
     CreateVehicleRequestFromJSON,
     CreateVehicleRequestToJSON,
+    ErrorResponseFromJSON,
+    ErrorResponseToJSON,
     UpdateVehicleRequestFromJSON,
     UpdateVehicleRequestToJSON,
     VehicleFromJSON,
@@ -33,25 +36,25 @@ export interface CreateVehicleOperationRequest {
 }
 
 export interface DeleteVehicleRequest {
-    id: number;
+    id: string;
 }
 
 export interface GetVehicleByIdRequest {
-    id: number;
+    id: string;
 }
 
 export interface ListVehiclesRequest {
-    status?: ListVehiclesStatusEnum;
     limit?: number;
+    offset?: number;
 }
 
 export interface ReplaceVehicleRequest {
-    id: number;
+    id: string;
     createVehicleRequest: CreateVehicleRequest;
 }
 
 export interface UpdateVehicleOperationRequest {
-    id: number;
+    id: string;
     updateVehicleRequest: UpdateVehicleRequest;
 }
 
@@ -123,15 +126,11 @@ export class VehiclesApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (requestParameters['id'] != null) {
-            queryParameters['id'] = requestParameters['id'];
-        }
-
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("BearerAuth", ["kjshdfahskfhakjsdfhkjasdhfkadsh"]);
+            const tokenString = await token("BearerAuth", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -139,6 +138,7 @@ export class VehiclesApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/vehicles/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
 
         const response = await this.request({
             path: urlPath,
@@ -172,15 +172,11 @@ export class VehiclesApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (requestParameters['id'] != null) {
-            queryParameters['id'] = requestParameters['id'];
-        }
-
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("BearerAuth", ["kjshdfahskfhakjsdfhkjasdhfkadsh"]);
+            const tokenString = await token("BearerAuth", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -188,6 +184,7 @@ export class VehiclesApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/vehicles/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
 
         const response = await this.request({
             path: urlPath,
@@ -215,12 +212,12 @@ export class VehiclesApi extends runtime.BaseAPI {
     async listVehiclesRaw(requestParameters: ListVehiclesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Vehicle>>> {
         const queryParameters: any = {};
 
-        if (requestParameters['status'] != null) {
-            queryParameters['status'] = requestParameters['status'];
-        }
-
         if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
+        }
+
+        if (requestParameters['offset'] != null) {
+            queryParameters['offset'] = requestParameters['offset'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -276,17 +273,13 @@ export class VehiclesApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (requestParameters['id'] != null) {
-            queryParameters['id'] = requestParameters['id'];
-        }
-
         const headerParameters: runtime.HTTPHeaders = {};
 
         headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("BearerAuth", ["kjshdfahskfhakjsdfhkjasdhfkadsh"]);
+            const tokenString = await token("BearerAuth", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -294,6 +287,7 @@ export class VehiclesApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/vehicles/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
 
         const response = await this.request({
             path: urlPath,
@@ -336,17 +330,13 @@ export class VehiclesApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (requestParameters['id'] != null) {
-            queryParameters['id'] = requestParameters['id'];
-        }
-
         const headerParameters: runtime.HTTPHeaders = {};
 
         headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("BearerAuth", ["kjshdfahskfhakjsdfhkjasdhfkadsh"]);
+            const tokenString = await token("BearerAuth", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -354,6 +344,7 @@ export class VehiclesApi extends runtime.BaseAPI {
         }
 
         let urlPath = `/vehicles/{id}`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
 
         const response = await this.request({
             path: urlPath,
@@ -376,13 +367,3 @@ export class VehiclesApi extends runtime.BaseAPI {
     }
 
 }
-
-/**
- * @export
- */
-export const ListVehiclesStatusEnum = {
-    Available: 'available',
-    Maintenance: 'maintenance',
-    Retired: 'retired'
-} as const;
-export type ListVehiclesStatusEnum = typeof ListVehiclesStatusEnum[keyof typeof ListVehiclesStatusEnum];

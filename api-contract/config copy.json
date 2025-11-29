@@ -1,0 +1,15 @@
+{
+  "dateLibrary": "java8",
+  "java8": true,
+  "useJakartaEe": true,
+  "useSpringBoot3": true,
+  "javaVersion": "21",
+  "useLombok": false,
+  "interfaceOnly": true,
+  "skipDefaultInterface": false,
+  "implicitHeaders": true,
+  "documentationProvider": "springdoc",
+  "modelNameMapping": {
+    "ListVehicles200ResponseInner": "Vehicle"
+  }
+}

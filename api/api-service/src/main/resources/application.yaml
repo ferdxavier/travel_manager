@@ -1,0 +1,28 @@
+# application.yml
+spring:
+  # Define o nome da aplicação (útil para logs/rastreamento)
+  application:
+    name: travel-manager-service
+  
+  # Configuração de Conexão com o Banco de Dados (PostgreSQL)
+  datasource:
+    url: jdbc:postgresql://localhost:5432/travelmanager_global_db
+    username: stock
+    password: stock123
+    driver-class-name: org.postgresql.Driver
+
+  # Configuração do JPA/Hibernate
+  jpa:
+    # 'update' cria tabelas se não existirem (apenas para desenvolvimento!)
+    hibernate:
+      ddl-auto: update 
+    show-sql: true     
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect # Otimização para PostgreSQL
+
+# A API gerada provavelmente usa a porta 8080. 
+# Usamos 8081 para o serviço principal para evitar conflito durante o desenvolvimento.
+server:
+  port: 8080

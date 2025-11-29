@@ -1,17 +1,53 @@
-# Esquema de Erro
-Error:
+# Esquema Comum de Erro
+# Define a estrutura de resposta para todos os erros de cliente (4xx) e servidor (5xx)
+# O Angular usará este modelo tipado para tratar o corpo da resposta de erro.
+
+# O esquema é definido diretamente na raiz deste ficheiro fragmentado
+# para facilitar o processo de agregação (bundling) no ficheiro principal (openapi.yaml).
+
+# O corpo da resposta de erro padrão
+ErrorResponse:
   type: object
-  description: "Modelo de resposta para erros."
+  description: Representa a resposta padrão de erro da API.
   properties:
-    code:
+    timestamp:
+      type: string
+      format: date-time
+      description: Data e hora em que o erro ocorreu.
+    status:
       type: integer
-      format: int32
-      description: "Código de status HTTP ou código de erro interno."
-      example: 400
+      description: Código de status HTTP (e.g., 400, 404).
+    errorCode:
+      type: string
+      description: Código de erro de negócio específico (e.g., 'VEHICLE_ALREADY_EXISTS', 'INVALID_PLATE_FORMAT').
     message:
       type: string
-      description: "Mensagem de erro detalhada."
-      example: "Dados inválidos: A placa 'ABC1F34' já está em uso."
+      description: Mensagem de erro legível e concisa para o desenvolvedor ou usuário.
+    traceId:
+      type: string
+      description: ID de rastreamento (trace ID) para correlacionar o erro com os logs do servidor.
+    details:
+      type: array
+      description: Detalhes adicionais, normalmente usados para erros de validação de campo (400).
+      items:
+        $ref: '#/ValidationErrorDetail'
   required:
-    - code
+    - timestamp
+    - status
+    - errorCode
     - message
+
+# Detalhe específico para erros de validação de campo (400)
+ValidationErrorDetail:
+  type: object
+  description: Detalhes de falha de validação em um campo específico.
+  properties:
+    field:
+      type: string
+      description: Nome do campo que falhou na validação.
+    issue:
+      type: string
+      description: Descrição do problema de validação (e.g., 'must be a positive number', 'is required').
+    targetValue:
+      type: string
+      description: O valor alvo do opração que gerou o erro caso exista.

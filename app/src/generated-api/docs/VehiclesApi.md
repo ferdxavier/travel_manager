@@ -80,7 +80,13 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **201** | Veículo criado com sucesso. Retorna o objeto Vehicle completo. |  -  |
-| **0** | Erro ao criar o veículo. |  -  |
+| **400** | Requisição inválida. Erro de validação de dados (e.g., campo obrigatório ausente, formato inválido). |  -  |
+| **403** | Proibido. O usuário está autenticado, mas não tem permissão para criar veículos. |  -  |
+| **404** | Recurso não encontrado. Algum recurso referenciado (ex: um ID de modelo) não existe. |  -  |
+| **409** | Conflito. A placa de matrícula ou VIN já está registado noutro veículo. |  -  |
+| **401** | Não autorizado. Token de autenticação ausente ou inválido. |  -  |
+| **500** | Erro interno do servidor. |  -  |
+| **0** | Erro inesperado não mapeado. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -111,8 +117,8 @@ async function example() {
   const api = new VehiclesApi(config);
 
   const body = {
-    // number | Identificador para indexar.
-    id: 56,
+    // string | Identificador único do recurso a ser operado (e.g., /recursos/{id}).
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
   } satisfies DeleteVehicleRequest;
 
   try {
@@ -132,7 +138,7 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **id** | `number` | Identificador para indexar. | [Defaults to `undefined`] |
+| **id** | `string` | Identificador único do recurso a ser operado (e.g., /recursos/{id}). | [Defaults to `undefined`] |
 
 ### Return type
 
@@ -152,7 +158,10 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **204** | Veículo removido com sucesso (Sem conteúdo). |  -  |
+| **401** | Não autorizado. |  -  |
+| **403** | Proibido. O usuário não tem permissão para remover este recurso. |  -  |
 | **404** | Veículo não encontrado. |  -  |
+| **500** | Erro interno do servidor. |  -  |
 | **0** | Erro ao remover o veículo. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
@@ -184,8 +193,8 @@ async function example() {
   const api = new VehiclesApi(config);
 
   const body = {
-    // number | Identificador para indexar.
-    id: 56,
+    // string | Identificador único do recurso a ser operado (e.g., /recursos/{id}).
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
   } satisfies GetVehicleByIdRequest;
 
   try {
@@ -205,7 +214,7 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **id** | `number` | Identificador para indexar. | [Defaults to `undefined`] |
+| **id** | `string` | Identificador único do recurso a ser operado (e.g., /recursos/{id}). | [Defaults to `undefined`] |
 
 ### Return type
 
@@ -225,15 +234,18 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Detalhes do veículo recuperado. |  -  |
-| **404** | Veículo não encontrado. |  -  |
-| **0** | Erro inesperado. |  -  |
+| **401** | Não autorizado. Token de autenticação ausente ou inválido. |  -  |
+| **403** | Proibido. O usuário está autenticado, mas não tem permissão de leitura para este veículo. |  -  |
+| **404** | Veículo não encontrado pelo ID fornecido. |  -  |
+| **500** | Erro interno do servidor. |  -  |
+| **0** | Erro inesperado não mapeado. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
 ## listVehicles
 
-> Array&lt;Vehicle&gt; listVehicles(status, limit)
+> Array&lt;Vehicle&gt; listVehicles(limit, offset)
 
 Lista todos os veículos disponíveis na frota.
 
@@ -257,10 +269,10 @@ async function example() {
   const api = new VehiclesApi(config);
 
   const body = {
-    // 'available' | 'maintenance' | 'retired' | Filtra por status do veículo (ex: \'available\', \'maintenance\'). (optional)
-    status: status_example,
     // number | Número máximo de itens a retornar por página. (optional)
     limit: 56,
+    // number | Número de itens a ignorar antes de começar a retornar os resultados (para paginação baseada em offset). Use 0 para a primeira página. (optional)
+    offset: 56,
   } satisfies ListVehiclesRequest;
 
   try {
@@ -280,8 +292,8 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **status** | `available`, `maintenance`, `retired` | Filtra por status do veículo (ex: \&#39;available\&#39;, \&#39;maintenance\&#39;). | [Optional] [Defaults to `undefined`] [Enum: available, maintenance, retired] |
 | **limit** | `number` | Número máximo de itens a retornar por página. | [Optional] [Defaults to `50`] |
+| **offset** | `number` | Número de itens a ignorar antes de começar a retornar os resultados (para paginação baseada em offset). Use 0 para a primeira página. | [Optional] [Defaults to `0`] |
 
 ### Return type
 
@@ -301,7 +313,9 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Uma lista paginada de veículos. |  -  |
-| **0** | Erro inesperado. |  -  |
+| **401** | Não autorizado. Token de autenticação ausente ou inválido. |  -  |
+| **500** | Erro interno do servidor. |  -  |
+| **0** | Erro inesperado não mapeado. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -332,9 +346,9 @@ async function example() {
   const api = new VehiclesApi(config);
 
   const body = {
-    // number | Identificador para indexar.
-    id: 56,
-    // CreateVehicleRequest | O objeto VehicleRequest completo para substituir o recurso.
+    // string | Identificador único do recurso a ser operado (e.g., /recursos/{id}).
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
+    // CreateVehicleRequest | O objeto CreateVehicleRequest completo para substituir o recurso.
     createVehicleRequest: ...,
   } satisfies ReplaceVehicleRequest;
 
@@ -355,8 +369,8 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **id** | `number` | Identificador para indexar. | [Defaults to `undefined`] |
-| **createVehicleRequest** | [CreateVehicleRequest](CreateVehicleRequest.md) | O objeto VehicleRequest completo para substituir o recurso. | |
+| **id** | `string` | Identificador único do recurso a ser operado (e.g., /recursos/{id}). | [Defaults to `undefined`] |
+| **createVehicleRequest** | [CreateVehicleRequest](CreateVehicleRequest.md) | O objeto CreateVehicleRequest completo para substituir o recurso. | |
 
 ### Return type
 
@@ -376,6 +390,12 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Veículo substituído com sucesso. |  -  |
+| **400** | Requisição inválida. Erro de validação de dados. |  -  |
+| **401** | Não autorizado. |  -  |
+| **403** | Proibido. O usuário não tem permissão para alterar este recurso. |  -  |
+| **404** | Veículo não encontrado. |  -  |
+| **409** | Conflito. (Ex: A nova placa já está em uso por outro veículo). |  -  |
+| **500** | Erro interno do servidor. |  -  |
 | **0** | Erro ao substituir o veículo. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
@@ -407,8 +427,8 @@ async function example() {
   const api = new VehiclesApi(config);
 
   const body = {
-    // number | Identificador para indexar.
-    id: 56,
+    // string | Identificador único do recurso a ser operado (e.g., /recursos/{id}).
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
     // UpdateVehicleRequest | O objeto UpdateVehicleRequest com os campos a serem modificados.
     updateVehicleRequest: ...,
   } satisfies UpdateVehicleOperationRequest;
@@ -430,7 +450,7 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **id** | `number` | Identificador para indexar. | [Defaults to `undefined`] |
+| **id** | `string` | Identificador único do recurso a ser operado (e.g., /recursos/{id}). | [Defaults to `undefined`] |
 | **updateVehicleRequest** | [UpdateVehicleRequest](UpdateVehicleRequest.md) | O objeto UpdateVehicleRequest com os campos a serem modificados. | |
 
 ### Return type
@@ -451,6 +471,12 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Veículo atualizado com sucesso. Retorna o objeto atualizado. |  -  |
+| **400** | Requisição inválida. Erro de validação de dados. |  -  |
+| **401** | Não autorizado. |  -  |
+| **403** | Proibido. O usuário não tem permissão para modificar este recurso. |  -  |
+| **404** | Veículo não encontrado. |  -  |
+| **409** | Conflito. (Ex: A nova placa já está em uso por outro veículo). |  -  |
+| **500** | Erro interno do servidor. |  -  |
 | **0** | Erro ao atualizar o veículo. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)

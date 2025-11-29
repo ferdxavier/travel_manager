@@ -1,84 +1,110 @@
 # Note: Este ficheiro contém múltiplos schemas, referenciados pelo nome.
 
 # ====================================================================
+# --- 0. BaseEntityProperties (ID e Timestamps - Usado para herança) ---
+# ====================================================================
+BaseEntityProperties:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: "ID único gerado pelo sistema."
+      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+    createdAt:
+      type: string
+      format: date-time
+      description: "Timestamp de criação do registro."
+      example: "2025-01-25T10:00:00Z"
+
+# ====================================================================
 # --- 1. PROPRIEDADES COMUNS REUTILIZÁVEIS (VehicleCommonProperties) ---
-# Contém a definição BASE de todos os metadados, incluindo x-ui-label.
+# Inclui a nova flag 'x-unique: true' para campos identificadores.
 # ====================================================================
 VehicleCommonProperties:
   type: object
-  x-abstract: true
   properties:
     licensePlate:
       type: string
       description: "Placa do veículo. Formato Mercosul (LLLNLNN)."
       example: "ABC1F34"
-      minLength: 8
-      maxLength: 8
+      minLength: 7
+      maxLength: 7
       pattern: "^[a-zA-Z]{3}[0-9][a-zA-Z][0-9]{2}$"
-      x-ui-label: "Placa" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Placa"
+      # 🔑 RESTRICÃO DE UNICIDADE ADICIONADA
+      x-unique: true
     model:
       type: string
       description: "Modelo e nome do veículo."
       example: "520 HP"
       minLength: 2
       maxLength: 20
-      x-ui-label: "Modelo" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Modelo"
     vehicleManufacturer:
       type: string
       description: "Fabricante do veículo."
-      example: "Scânia"
+      example: "Scania"
       minLength: 2
       maxLength: 20
-      x-ui-label: "Fabricante (Marca)" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Fabricante (Marca)"
     modelYear:
       type: integer
       description: "Ano do Modelo do veículo."
       example: 2024
       minimum: 1980
       maximum: 2099
-      x-ui-label: "Ano do Modelo" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Ano do Modelo"
     manufacturerYear:
       type: integer
       description: "Ano de fabricação do veículo."
       example: 2023
       minimum: 1980
       maximum: 2099
-      x-ui-label: "Ano de Fabricação" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Ano de Fabricação"
     renavan:
       type: string
       description: "Número do RENAVAN do veículo."
       example: "4566546465"
       minLength: 6
       maxLength: 10
-      x-ui-label: "Número do RENAVAN" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Número do RENAVAN"
+      # 🔑 RESTRICÃO DE UNICIDADE ADICIONADA
+      x-unique: true
     passengerNumber:
       type: integer
       description: "Em caso de veículo de transporte, o número de passageiros."
       example: 50
       minimum: 1
       maximum: 80
-      x-ui-label: "Nº de Passageiros" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Nº de Passageiros"
     motorNumber:
       type: string
       description: "Número do motor do veículo."
       example: "20234565"
       minLength: 2
       maxLength: 20
-      x-ui-label: "Número do Motor" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Número do Motor"
+      # 🔑 RESTRICÃO DE UNICIDADE ADICIONADA
+      x-unique: true
     chassisNumber:
       type: string
       description: "Número do chassis do veículo."
       example: "BDH546SDFG565465SD5656BR"
       minLength: 10
       maxLength: 40
-      x-ui-label: "Número do Chassi" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Número do Chassi"
+      # 🔑 RESTRICÃO DE UNICIDADE ADICIONADA
+      x-unique: true
     fleetNumber:
       type: integer
       description: "Número interno que corresponte ao id do veículo da frota da empresa."
       example: 1803
       minimum: 1
       maximum: 99999999
-      x-ui-label: "Número de Frota (ID Interno)" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Número de Frota (ID Interno)"
+      # 🔑 RESTRICÃO DE UNICIDADE ADICIONADA
+      x-unique: true
     fuelTankCapacity:
       type: number
       format: float
@@ -86,14 +112,14 @@ VehicleCommonProperties:
       example: 500.5
       minimum: 1
       maximum: 10000
-      x-ui-label: "Capacidade do Tanque em (Litros)" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Capacidade do Tanque em (Litros)"
     entryMileage:
       type: integer
       description: "Quilometragem do veículo na entrada da empresa (no cadastro)."
       example: 3000000
       minimum: 0
       maximum: 10000000
-      x-ui-label: "Quilometragem de Entrada (Km)" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Quilometragem de Entrada (Km)"
     averageConsumption:
       type: number
       format: float
@@ -101,40 +127,40 @@ VehicleCommonProperties:
       example: 2.6
       minimum: 0.1
       maximum: 50.0
-      x-ui-label: "Consumo Médio (Km/L)" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Consumo Médio (Km/L)"
     bodyManufacturer:
       type: string
       description: "Fabricante da carroceria."
       example: "Marcopolo"
       minLength: 2
       maxLength: 20
-      x-ui-label: "Fabricante da Carroceria" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Fabricante da Carroceria"
     bodyModel:
       type: string
       description: "Nome do modelo da carroceria."
       example: "G6 1200"
       minLength: 2
       maxLength: 20
-      x-ui-label: "Modelo da Carroceria" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Modelo da Carroceria"
     axesNumber:
       type: integer
       description: "Número de eixos que o veículo possui."
       example: 3
       minimum: 2
       maximum: 20
-      x-ui-label: "Número de Eixos" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Número de Eixos"
     engineDescription:
       type: string
       description: "Descrição do motor."
       example: "B10 M Intercooler"
       minLength: 3
       maxLength: 100
-      x-ui-label: "Descrição do Motor" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Descrição do Motor"
     hasBathroom:
       type: boolean
       description: "Se o veículo possui banheiro"
       example: true
-      x-ui-label: "Possui banheiro" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Possui banheiro"
     status:
       type: string
       enum:
@@ -143,73 +169,62 @@ VehicleCommonProperties:
         - retired
       default: available
       description: "Status operacional atual/desejado do veículo."
-      x-ui-label: "Status Operacional" # PADRÃO DEFINIDO AQUI
+      x-ui-label: "Status Operacional"
+
+
+# ====================================================================
+# --- 1.5. VehicleFullBase (Schema para Composição de Resposta Completa) ---
+# Combina BaseEntityProperties e VehicleCommonProperties.
+# ====================================================================
+VehicleFullBase:
+  type: object
+  description: "Propriedades de base e comuns do Veículo."
+  allOf:
+    - $ref: '#/BaseEntityProperties'
+    - $ref: '#/VehicleCommonProperties'
 
 
 # ====================================================================
 # --- 2. Vehicle (Objeto de Resposta Completa) ---
-# Herda tudo do Common e adiciona id/createdAt. Os x-ui-label são herdados.
+# Referencia apenas o schema de base completo.
 # ====================================================================
 Vehicle:
+  type: object
   description: "Representação completa de um veículo na frota."
   allOf:
-    - $ref: '#/VehicleCommonProperties'
-    - type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: "ID único gerado pelo sistema."
-          example: 35
-        createdAt:
-          type: string
-          format: date-time
-          description: "Timestamp de criação do registro."
-          example: "2025-25-01"
-      required:
-        - id
-        - licensePlate
-        - model
-        - status
-
+    - $ref: '#/VehicleFullBase'
+  required:
+    - id
+    - licensePlate
+    - model
+    - status
 
 # ====================================================================
 # --- 3. CreateVehicleRequest (Objeto de Criação - Input) ---
-# Herda tudo do Common. Sobrescreve SÓ as validações específicas.
-# Os x-ui-label são herdados e NENHUM precisa ser re-declarado, a menos que mude.
+# CORREÇÃO: Usando $ref direto para evitar warnings de allOf/0.
 # ====================================================================
 CreateVehicleRequest:
+  type: object
   description: "Dados necessários para criar um veículo (sem o ID gerado pelo sistema e timestamps)."
   allOf:
     - $ref: '#/VehicleCommonProperties'
-    - type: object
-#      properties:
-          
-      required:
-        - licensePlate
-        - vehicleManufacturer
-        - model
-        - modelYear
-        - manufacturerYear
-        - passengerNumber
-        - hasBathroom
-        - chassisNumber
-        - status
+  required:
+    - licensePlate
+    - vehicleManufacturer
+    - model
+    - modelYear
+    - manufacturerYear
+    - passengerNumber
+    - hasBathroom
+    - chassisNumber
+    - status
 
 # ====================================================================
 # --- 4. UpdateVehicleRequest (Objeto de Atualização - Input Parcial) ---
-# Permite o envio de qualquer propriedade do VehicleCommonProperties,
-# mas NENHUM campo é obrigatório (partial data / PATCH support).
+# CORREÇÃO: Usando $ref direto para evitar warnings de allOf/0.
 # ====================================================================
 UpdateVehicleRequest:
+  type: object
   description: "Dados opcionais necessários para atualizar parcialmente um veículo existente (suporte a PATCH). Pelo menos um campo deve ser fornecido."
   allOf:
     - $ref: '#/VehicleCommonProperties'
-    - type: object
-      # O bloco 'required' é omitido ou vazio, o que faz com que
-      # todas as propriedades herdadas de VehicleCommonProperties
-      # sejam consideradas opcionais.
-      #
-      # Nota importante: No backend, você deve garantir que campos
-      # imutáveis (como x-immutable: true) não sejam alterados,
-      # mesmo que sejam enviados neste DTO.

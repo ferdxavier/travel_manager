@@ -31,11 +31,12 @@ paths:
     $ref: "./specs/paths/vehicles/vehicles_by_id.yaml"
   /drivers:
     $ref: "./specs/paths/drivers/drivers.yaml"
-  /serviceOrders:
-    $ref: "./specs/paths/serviceOrders/serviceOrders.yaml"
-  /reportReason:
-    $ref: "./specs/paths/reportReason/reportReason.yaml"
-
+  /serviceOrders/{id}:
+    $ref: "./specs/paths/serviceOrders/serviceOrders_by_id.yaml"
+  /reportReason/driver:
+    $ref: "./specs/paths/reportReason/driver_path.yaml"
+  /reportReason/passenger:
+    $ref: "./specs/paths/reportReason/passenger_path.yaml"
 # ----------------------------------------------------------------------
 # 2. COMPONENTS (Estruturas de Dados e Elementos Reutilizáveis)
 # ----------------------------------------------------------------------
@@ -61,11 +62,11 @@ components:
     # Service Orders
     # ----------------------------------------------------------------------
     ServiceOrders:
-      $ref: "./specs/schemas/serviceorders.yaml#/ServiceOrders"
+      $ref: "./specs/schemas/serviceOrders.yaml#/ServiceOrders"
     CreateServiceOrdersRequest:
-      $ref: "./specs/schemas/serviceorders.yaml#/CreateServiceOrdersRequest"
+      $ref: "./specs/schemas/serviceOrders.yaml#/CreateServiceOrdersRequest"
         # ----------------------------------------------------------------------
-    # Service Orders
+    # Reports
     # ----------------------------------------------------------------------
     PassengerReportReason:
       $ref: "./specs/schemas/reportReason.yaml#/PassengerReportReason"
@@ -76,22 +77,26 @@ components:
     CreateDriverReportRequest:
       $ref: "./specs/schemas/reportReason.yaml#/CreateDriverReportRequest"
     # ----------------------------------------------------------------------
-    # Commons
+    # Commons (Modelos de Erro)
     # ----------------------------------------------------------------------
-    Error:
-      $ref: "./specs/schemas/common_error.yaml#/Error"
+    ErrorResponse:
+      $ref: "./specs/schemas/common_error.yaml#/ErrorResponse"
+    ValidationErrorDetail:
+      $ref: "./specs/schemas/common_error.yaml#/ValidationErrorDetail"
       
   parameters:
     PaginationLimit:
       $ref: "./specs/common/parameters.yaml#/PaginationLimit"
-    CommonId:
-      $ref: "./specs/common/parameters.yaml#/CommonId"
-
+    PaginationOffset:
+      $ref: "./specs/common/parameters.yaml#/PaginationOffset"
+    CommonQueryId: # CORRIGIDO: Nome agora corresponde à referência externa
+      $ref: "./specs/common/parameters.yaml#/CommonQueryId"
+    ResourceIdPath:
+      $ref: "./specs/common/parameters.yaml#/ResourceIdPath"
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
 security:
   - BearerAuth: ['kjshdfahskfhakjsdfhkjasdhfkadsh']

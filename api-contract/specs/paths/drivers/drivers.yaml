@@ -1,27 +1,131 @@
-# Conteúdo do path /drivers (incluído no openapi.yaml principal)
+# Definição das Operações para o recurso /drivers (Coleção)
+
+# --------------------------
+# OPERAÇÃO GET (Listar)
+# --------------------------
 get:
-  summary: "Lista todos os motorista do empresa."
+  summary: "Lista todos os motoristas da empresa."
   description: "Recupera uma lista paginada de todos os motoristas registados na empresa."
   operationId: listDrivers
   tags:
     - Drivers
+    
+  # Esta rota requer autenticação para listar dados sensíveis
+  security:
+    - BearerAuth: []
 
   parameters:
-    - $ref: "../../common/parameters.yaml#/PaginationLimit" # Referência local
+    - $ref: "../../common/parameters.yaml#/PaginationLimit" 
+    - $ref: "../../common/parameters.yaml#/PaginationOffset"
 
   responses:
     "200":
-      description: "Uma lista paginada de motorista."
+      description: "Uma lista paginada de motoristas."
       content:
         application/json:
           schema:
             type: array
             items:
-              $ref: "../../schemas/driver.yaml#/Driver" # Referência local
+              $ref: "../../schemas/driver.yaml#/Driver"
 
-    default:
-      description: "Erro inesperado."
+    # Tratamento de Erros para GET
+    "401":
+      description: "Não autorizado. Token de autenticação ausente ou inválido."
       content:
         application/json:
           schema:
-            $ref: "../../schemas/common_error.yaml#/Error" # Referência local
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "403":
+      description: "Proibido. O usuário está autenticado, mas não tem permissão para listar motoristas."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    default:
+      description: "Erro inesperado não mapeado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse" # CORRIGIDO: Referencia ErrorResponse
+
+# --------------------------
+# OPERAÇÃO POST (Criar)
+# --------------------------
+post:
+  summary: "Cria um novo motorista no sistema."
+  description: "Registra um novo motorista."
+  operationId: createDriver
+  tags:
+    - Drivers
+    
+  # Esta rota requer autenticação para criar dados
+  security:
+    - BearerAuth: []
+
+  requestBody:
+    description: "Dados do motorista a ser criado."
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/driver.yaml#/CreateDriverRequest"
+
+  responses:
+    "201":
+      description: "Motorista criado com sucesso."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/driver.yaml#/Driver"
+
+    # Tratamento de Erros para POST
+    "400":
+      description: "Requisição inválida. Erro de validação de dados (e.g., campos obrigatórios ausentes)."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse" # CORRIGIDO: Referencia ErrorResponse
+
+    "401":
+      description: "Não autorizado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "403":
+      description: "Proibido. O usuário não tem permissão para criar motoristas."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "409":
+      description: "Conflito. (Ex: O número da CNH ou CPF já está registrado)."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    default:
+      description: "Erro inesperado não mapeado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse" # CORRIGIDO: Referencia ErrorResponse

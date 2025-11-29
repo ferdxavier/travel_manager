@@ -1,7 +1,8 @@
-# Parâmetros de Path (ID)
-parameters:
-  # Referência ao parâmetro ID que sugerimos modularizar (melhor prática)
-  - $ref: "../../common/parameters.yaml#/CommonId" 
+# Definição das Operações para o recurso /vehicles/{id} (Recurso Singular)
+
+parameters: # OBRIGATÓRIO: Define os parâmetros que são herdados por todas as operações
+  # SUBSTITUÍDO: Usando a referência reutilizável para o ID no PATH.
+  - $ref: "../../common/parameters.yaml#/ResourceIdPath"
 
 get:
   summary: "Recupera os detalhes de um veículo específico."
@@ -9,6 +10,10 @@ get:
   operationId: getVehicleById
   tags:
     - Vehicles
+
+  # Esta rota requer autenticação para consultar dados
+  security:
+    - BearerAuth: []
 
   responses:
     "200":
@@ -18,19 +23,42 @@ get:
           schema:
             $ref: "../../schemas/vehicle.yaml#/Vehicle" 
 
-    "404":
-      description: "Veículo não encontrado."
+    # Tratamento de Erros
+    "401":
+      description: "Não autorizado. Token de autenticação ausente ou inválido."
       content:
         application/json:
           schema:
-            $ref: "../../schemas/common_error.yaml#/Error"
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "403":
+      description: "Proibido. O usuário está autenticado, mas não tem permissão de leitura para este veículo."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "404":
+      description: "Veículo não encontrado pelo ID fornecido."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
 
     default:
-      description: "Erro inesperado."
+      description: "Erro inesperado não mapeado."
       content:
         application/json:
           schema:
-            $ref: "../../schemas/common_error.yaml#/Error"
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
 
 put:
   summary: "Substitui completamente um registo de veículo."
@@ -38,9 +66,12 @@ put:
   operationId: replaceVehicle
   tags:
     - Vehicles
+    
+  security:
+    - BearerAuth: []
 
   requestBody:
-    description: "O objeto VehicleRequest completo para substituir o recurso."
+    description: "O objeto CreateVehicleRequest completo para substituir o recurso."
     required: true
     content:
       application/json:
@@ -56,12 +87,56 @@ put:
           schema:
             $ref: "../../schemas/vehicle.yaml#/Vehicle"
 
+    # Tratamento de Erros
+    "400":
+      description: "Requisição inválida. Erro de validação de dados."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "401":
+      description: "Não autorizado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+            
+    "403":
+      description: "Proibido. O usuário não tem permissão para alterar este recurso."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "404":
+      description: "Veículo não encontrado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "409":
+      description: "Conflito. (Ex: A nova placa já está em uso por outro veículo)."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
     default:
       description: "Erro ao substituir o veículo."
       content:
         application/json:
           schema:
-            $ref: "../../schemas/common_error.yaml#/Error"
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
 
 patch:
   summary: "Atualiza parcialmente os detalhes de um veículo."
@@ -69,6 +144,9 @@ patch:
   operationId: updateVehicle
   tags:
     - Vehicles
+    
+  security:
+    - BearerAuth: []
 
   requestBody:
     description: "O objeto UpdateVehicleRequest com os campos a serem modificados."
@@ -87,12 +165,56 @@ patch:
           schema:
             $ref: "../../schemas/vehicle.yaml#/Vehicle"
 
+    # Tratamento de Erros
+    "400":
+      description: "Requisição inválida. Erro de validação de dados."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "401":
+      description: "Não autorizado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+            
+    "403":
+      description: "Proibido. O usuário não tem permissão para modificar este recurso."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "404":
+      description: "Veículo não encontrado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "409":
+      description: "Conflito. (Ex: A nova placa já está em uso por outro veículo)."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
     default:
       description: "Erro ao atualizar o veículo."
       content:
         application/json:
           schema:
-            $ref: "../../schemas/common_error.yaml#/Error"
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
 
 delete:
   summary: "Remove um veículo da frota."
@@ -100,21 +222,46 @@ delete:
   operationId: deleteVehicle
   tags:
     - Vehicles
+    
+  security:
+    - BearerAuth: []
 
   responses:
     "204":
       description: "Veículo removido com sucesso (Sem conteúdo)."
     
+    # Tratamento de Erros
+    "401":
+      description: "Não autorizado."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+            
+    "403":
+      description: "Proibido. O usuário não tem permissão para remover este recurso."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
     "404":
       description: "Veículo não encontrado."
       content:
         application/json:
           schema:
-            $ref: "../../schemas/common_error.yaml#/Error"
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
+
+    "500":
+      description: "Erro interno do servidor."
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"
 
     default:
       description: "Erro ao remover o veículo."
       content:
         application/json:
           schema:
-            $ref: "../../schemas/common_error.yaml#/Error"
+            $ref: "../../schemas/common_error.yaml#/ErrorResponse"

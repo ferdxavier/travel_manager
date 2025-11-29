@@ -7,6 +7,8 @@ Representação completa de um veículo na frota.
 
 Name | Type
 ------------ | -------------
+`id` | string
+`createdAt` | Date
 `licensePlate` | string
 `model` | string
 `vehicleManufacturer` | string
@@ -26,8 +28,6 @@ Name | Type
 `engineDescription` | string
 `hasBathroom` | boolean
 `status` | string
-`id` | string
-`createdAt` | Date
 
 ## Example
 
@@ -36,9 +36,11 @@ import type { Vehicle } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "id": a1b2c3d4-e5f6-7890-1234-567890abcdef,
+  "createdAt": 2025-01-25T10:00Z,
   "licensePlate": ABC1F34,
   "model": 520 HP,
-  "vehicleManufacturer": Scânia,
+  "vehicleManufacturer": Scania,
   "modelYear": 2024,
   "manufacturerYear": 2023,
   "renavan": 4566546465,
@@ -55,8 +57,6 @@ const example = {
   "engineDescription": B10 M Intercooler,
   "hasBathroom": true,
   "status": null,
-  "id": null,
-  "createdAt": null,
 } satisfies Vehicle
 
 console.log(example)

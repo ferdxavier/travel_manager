@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Category, CreateServiceOrdersRequest, Impact, MaintenanceNature, Priority, Status, Type, Vehicle } from '../../../generated-api';
+import { CreateServiceOrdersRequest, ServiceOrdersCategoryEnum, ServiceOrdersImpactEnum, ServiceOrdersMaintenanceNatureEnum, ServiceOrdersPriorityEnum, ServiceOrdersStatusEnum, ServiceOrdersTypeEnum, Vehicle } from '../../../generated-api';
 
 // =======================================================================================
 // DADOS MOCKADOS E CONSTANTES PARA O COMPONENTE
@@ -11,12 +11,12 @@ import { Category, CreateServiceOrdersRequest, Impact, MaintenanceNature, Priori
 const MOCK_USER_ID = "f0e9d8c7-b6a5-4321-fedc-ba9876543210"; // ID do usuário que insere a OS (obrigatório)
 
 // Converte os enums em arrays usáveis para o <select>
-const VEHICLE_TYPES = Object.values(Type);
-const CATEGORIES = Object.values(Category);
-const MAINTENANCE_NATURES = Object.values(MaintenanceNature);
-const IMPACTS = Object.values(Impact);
-const PRIORITIES = Object.values(Priority);
-const STATUSES = Object.values(Status);
+const VEHICLE_TYPES = Object.values(ServiceOrdersTypeEnum);
+const CATEGORIES = Object.values(ServiceOrdersCategoryEnum);
+const MAINTENANCE_NATURES = Object.values(ServiceOrdersMaintenanceNatureEnum);
+const IMPACTS = Object.values(ServiceOrdersImpactEnum);
+const PRIORITIES = Object.values(ServiceOrdersPriorityEnum);
+const STATUSES = Object.values(ServiceOrdersStatusEnum);
 
 const MOCK_VEHICLES: Vehicle[] = [
   { id: '1a2b-3c4d', licensePlate: 'ABC1D23', model: 'Atron 1635', status: 'available' as any },
@@ -224,7 +224,7 @@ export class NewServiceOrdersComponent implements OnInit {
       category: ['', Validators.required],
       maintenanceNature: ['', Validators.required],
       impact: ['', Validators.required],
-      priority: [Priority.Medium, Validators.required], // Define Medium como padrão
+      priority: [ServiceOrdersPriorityEnum.Medium, Validators.required], // Define Medium como padrão
       serviceDate: [null], // Campo opcional
       // status não é incluído, pois a API o define como 'open' (readOnly=true)
     });
@@ -272,7 +272,7 @@ export class NewServiceOrdersComponent implements OnInit {
       if (Math.random() > 0.1) {
         this.successMessage.set(`Ordem de Serviço criada com sucesso para o veículo ${formValue.vehicleId}!`);
         this.serviceOrderForm.reset({
-          priority: Priority.Medium,
+          priority: ServiceOrdersPriorityEnum.Medium,
           // Garante que o usuário tem que selecionar os valores do dropdown novamente
           vehicleId: '', type: '', category: '', maintenanceNature: '', impact: ''
         });

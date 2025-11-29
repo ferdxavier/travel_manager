@@ -1,0 +1,152 @@
+# service_order.yaml
+
+# Note: Este ficheiro contém múltiplos schemas, referenciados pelo nome.
+ServiceOrders:
+  type: object
+  description: "Representação completa de ordem de serviço para veiculos, com detalhes granulares sobre o tipo e prioridade da manutenção."
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: "ID único gerado pelo sistema."
+    
+    vehicleId:
+      type: string
+      format: uuid
+      description: "ID do veículo ao qual a ordem de serviço está associada."
+      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+
+    userId:
+      type: string
+      format: uuid
+      description: "ID do usuário que inseriu/criou a ordem de serviço."
+      example: "f0e9d8c7-b6a5-4321-fedc-ba9876543210"
+    
+    status:
+      type: string
+      description: "Status atual da ordem de serviço."
+      enum:
+        - open
+        - in_progress
+        - closed
+        - canceled
+      default: open
+
+    # NOVOS CAMPOS PARA GRANULARIDADE
+    type:
+      type: string
+      description: "Tipo de manutenção: interna (frota própria) ou externa (terceirizada)."
+      enum:
+        - internal
+        - external
+      example: "internal"
+
+    category:
+      type: string
+      description: "Categoria da manutenção, focando na área do veículo."
+      enum:
+        - engine_and_transmission
+        - chassis_and_suspension
+        - body_and_interior
+        - electric_system
+        - tires_and_wheels
+        - general_inspection
+      example: "chassis_and_suspension"
+    
+    maintenanceNature:
+      type: string
+      description: "Natureza da manutenção: preventiva (agendada), corretiva (necessária/quebra) ou preditiva (baseada em dados)."
+      enum:
+        - preventive
+        - corrective
+        - predictive
+      example: "corrective"
+
+    impact:
+      type: string
+      description: "Impacto imediato no veículo: bloqueante (impede uso) ou não-bloqueante."
+      enum:
+        - blocking # O veículo não pode operar (e.g., quebra de motor)
+        - necessary # O veículo pode operar, mas deve ser consertado logo (e.g., luz de injeção)
+        - non_critical # O veículo pode operar (e.g., arranhão na pintura)
+      example: "blocking"
+
+    priority:
+      type: string
+      description: "Prioridade atribuída à ordem de serviço (afeta o SLA)."
+      enum:
+        - low
+        - medium
+        - high
+        - critical
+      default: medium
+      # FIM DOS NOVOS CAMPOS
+      
+    description:
+      type: string
+      description: "Descrição detalhada do problema ou serviço a ser realizado."
+      maxLength: 500
+
+    serviceDate:
+      type: string
+      format: date
+      description: "Data em que o serviço foi agendado ou concluído."
+      nullable: true
+      example: "2025-11-24"
+
+    cost:
+      type: number
+      format: float
+      description: "Custo total da ordem de serviço, se aplicável."
+      nullable: true
+      example: 450.75
+
+    createdAt:
+      type: string
+      format: date-time
+      description: "Carimbo de data/hora da criação do registo."
+
+CreateServiceOrdersRequest:
+  type: object
+  description: "Dados necessários para criar uma nova ordem de serviço."
+  required:
+    - vehicleId
+    - description
+    - userId
+    - type
+    - maintenanceNature
+    - impact
+    - priority
+    - category # Adicionando os novos campos ao corpo obrigatório da requisição
+  properties:
+    vehicleId:
+      $ref: "#/ServiceOrders/properties/vehicleId"
+    
+    userId:
+      $ref: "#/ServiceOrders/properties/userId"
+      description: "ID do usuário que insere a ordem. (Temporariamente obrigatório)"
+    
+    description:
+      $ref: "#/ServiceOrders/properties/description"
+    
+    type:
+      $ref: "#/ServiceOrders/properties/type"
+
+    category:
+      $ref: "#/ServiceOrders/properties/category"
+      
+    maintenanceNature:
+      $ref: "#/ServiceOrders/properties/maintenanceNature"
+
+    impact:
+      $ref: "#/ServiceOrders/properties/impact"
+
+    priority:
+      $ref: "#/ServiceOrders/properties/priority"
+      
+    serviceDate:
+      $ref: "#/ServiceOrders/properties/serviceDate"
+      
+    status:
+      $ref: "#/ServiceOrders/properties/status"
+      readOnly: true # O status inicial é sempre 'open'

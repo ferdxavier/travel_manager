@@ -1,4 +1,6 @@
 # Definições de Parâmetros Reutilizáveis
+
+# 1. Parâmetro de Paginação (Limite) - OK
 PaginationLimit:
   name: limit
   in: query
@@ -8,12 +10,37 @@ PaginationLimit:
     type: integer
     format: int32
     default: 50
+    minimum: 1
+    maximum: 100 # Adicionando um limite superior recomendado para performance
 
-CommonId:
-  name: id
+# 2. Parâmetro de Paginação (Offset) - NOVO: Define a partir de qual item retornar.
+PaginationOffset:
+  name: offset
   in: query
-  description: "Identificador para indexar."
-  required: true
+  description: "Número de itens a ignorar antes de começar a retornar os resultados (para paginação baseada em offset). Use 0 para a primeira página."
+  required: false
   schema:
     type: integer
     format: int32
+    default: 0
+    minimum: 0
+
+# 3. Identificador Comum (Ajustado para UUID para consistência)
+CommonQueryId: # Renomeado para especificar que é para 'query'
+  name: id
+  in: query
+  description: "Identificador único para filtrar uma coleção (e.g., ?id=uuid)."
+  required: true
+  schema:
+    type: string
+    format: uuid # Alterado de int32 para string/uuid, para coincidir com as entidades Vehicle e ServiceOrders
+
+# 4. SUGGESTÃO: Identificador Comum para PATH... Exemplo: /rota/12 onde 12 é o valor assumido por id -->   in: path
+ResourceIdPath:
+  name: id
+  in: path
+  description: "Identificador único do recurso a ser operado (e.g., /recursos/{id})."
+  required: true # Obrigatório se estiver no path
+  schema:
+    type: string
+    format: uuid

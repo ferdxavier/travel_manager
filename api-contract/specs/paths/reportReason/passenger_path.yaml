@@ -1,0 +1,57 @@
+# Definição das Operações para o recurso /passengerReports (Coleção)
+
+post:
+  operationId: createPassengerReport
+  summary: Cria um novo relato anónimo de problema por um passageiro.
+  description: |
+    Recebe os dados básicos e anónimos de um passageiro sobre um problema no veículo.
+    O *backend* processará esta informação (triagem) e decidirá se uma Ordem de Serviço
+    será criada com base nos requisitos atendidos.
+  tags:
+    - PassengerReports
+  requestBody:
+    description: Dados do relatório de problema fornecidos pelo passageiro.
+    required: true
+    content:
+      application/json:
+        schema:
+          # Referência ao DTO CreatePassengerReportRequest
+          $ref: ../../schemas/reportReason.yaml#/CreatePassengerReportRequest
+  responses:
+    '202':
+      description: |
+        O relato foi recebido e aceito para processamento (triagem).
+        O *backend* iniciará a análise para determinar se uma Ordem de Serviço será gerada.
+
+    # ------------------------------------------------------------------
+    # Tratamento de Erros
+    # ------------------------------------------------------------------
+    '400':
+      description: "Requisição inválida. Erro de validação de dados (e.g., campo obrigatório ausente)."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse # CORRIGIDO: Referencia ErrorResponse
+            
+    '404':
+      description: "Recurso não encontrado. (Ex: O vehicleId referenciado no relatório não existe)."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse
+            
+    '500':
+      description: "Erro interno do servidor. (Inclui falhas inesperadas de infraestrutura/DB)."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse # CORRIGIDO: Referencia ErrorResponse
+            
+    default:
+      description: "Erro inesperado não mapeado."
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas/common_error.yaml#/ErrorResponse # CORRIGIDO: Referencia ErrorResponse
+
+  security: [] # Esta rota é pública e não requer autenticação.
